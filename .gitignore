@@ -3,3 +3,10 @@ build/.gradle/
 build/build.iml
 build/build.ipr
 build/build.iws
+.gradle/
+Ender-Storage.iml
+Ender-Storage.ipr
+Ender-Storage.iws
+build.iml
+build.ipr
+build.iws
