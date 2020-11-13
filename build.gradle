@@ -52,14 +52,14 @@ minecraft {
     version = config.mc_version + "-" + config.forge_version
 }
 
-def root = project.projectDir.parentFile
+//def root = project.projectDir.parentFile
 sourceSets {
     main {
         java {
-            srcDir new File(root, "src")
+            srcDir new File("src")
         }
         resources {
-            srcDir new File(root, "resources")
+            srcDir new File("resources")
         }
     }
 }
@@ -88,7 +88,7 @@ jar {
 
 task sourceJar(type: Jar) {
     from sourceSets.main.java
-    from new File(root, "dev")
+    from new File("dev")
     classifier = 'src'
 }
 
