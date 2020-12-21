@@ -131,6 +131,6 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer
         RenderUtils.renderFluidCuboid(liquid, 
                 new Cuboid6(0.22, 0.12, 0.22, 0.78, 0.121+0.63, 0.78)
                     .add(new Vector3(x, y, z)), 
-                liquid.amount/(16D*FluidUtils.B), 0.75);
+                liquid.amount/(4096D*FluidUtils.B), 0.75);
     }
 }
