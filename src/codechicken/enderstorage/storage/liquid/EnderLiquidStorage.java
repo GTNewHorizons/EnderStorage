@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class EnderLiquidStorage extends AbstractEnderStorage implements IFluidHandler
 {
-    public static final int CAPACITY = 4096 * FluidUtils.B;
+    public static final int CAPACITY = 256 * FluidUtils.B;
 
     private class Tank extends ExtendedFluidTank
     {

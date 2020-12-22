@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="enderStorageTest">
+    <output-path>$PROJECT_DIR$/out/artifacts/enderStorageTest</output-path>
+    <root id="archive" name="enderStorageTest.jar" />
+  </artifact>
+</component>
