@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import codechicken.core.ClientUtils;
@@ -12,6 +13,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Vector3;
+import codechicken.enderstorage.EnderStorage;
 import codechicken.enderstorage.api.EnderStorageManager;
 import codechicken.enderstorage.common.RenderCustomEndPortal;
 import codechicken.enderstorage.internal.EnderStorageClientProxy;
@@ -23,8 +25,10 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
     }
 
     public static void renderChest(int rotation, int freq, boolean owned, double x, double y, double z, int offset, float lidAngle) {
-        TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
-        renderEndPortal.render(x, y, z, 0, info.field_147560_j, info.field_147560_j, info.field_147561_k, info.field_147553_e);
+    	if (!EnderStorage.disableFXChest) {
+    		TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
+    		renderEndPortal.render(x, y, z, 0, info.field_147560_j, info.field_147560_j, info.field_147561_k, info.field_147553_e);
+    	}
         GL11.glColor4f(1, 1, 1, 1);
 
         CCRenderState.changeTexture("enderstorage:textures/enderchest.png");

@@ -2,6 +2,7 @@ package codechicken.enderstorage.storage.liquid;
 
 import codechicken.core.fluid.ExtendedFluidTank;
 import codechicken.core.fluid.FluidUtils;
+import codechicken.enderstorage.EnderStorage;
 import codechicken.enderstorage.api.AbstractEnderStorage;
 import codechicken.enderstorage.api.EnderStorageManager;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,8 +14,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class EnderLiquidStorage extends AbstractEnderStorage implements IFluidHandler
 {
-    public static final int CAPACITY = 256 * FluidUtils.B;
-
+    public static final int CAPACITY = EnderStorage.enderTankSize * FluidUtils.B;
+    
     private class Tank extends ExtendedFluidTank
     {
         public Tank(int capacity) {
