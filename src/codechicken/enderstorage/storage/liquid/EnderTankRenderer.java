@@ -22,6 +22,7 @@ import codechicken.lib.vec.Transformation;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.SwapYZ;
+import codechicken.enderstorage.EnderStorage;
 import codechicken.enderstorage.api.EnderStorageManager;
 import codechicken.enderstorage.common.RenderCustomEndPortal;
 import codechicken.enderstorage.common.RenderEnderStorage;
@@ -81,8 +82,10 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer
     
     public static void renderTank(int rotation, float valve, int freq, boolean owned, double x, double y, double z, int offset)
     {
-        TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
-        renderEndPortal.render(x, y, z, 0, info.field_147560_j, info.field_147560_j, info.field_147561_k, info.field_147553_e);
+    	if (!EnderStorage.disableFXTank) {
+    		TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
+    		renderEndPortal.render(x, y, z, 0, info.field_147560_j, info.field_147560_j, info.field_147561_k, info.field_147553_e);
+    	}
         GL11.glColor4f(1, 1, 1, 1);
         
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -131,6 +134,6 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer
         RenderUtils.renderFluidCuboid(liquid, 
                 new Cuboid6(0.22, 0.12, 0.22, 0.78, 0.121+0.63, 0.78)
                     .add(new Vector3(x, y, z)), 
-                liquid.amount/(256D*FluidUtils.B), 0.75);
+                liquid.amount/((double)EnderStorage.enderTankSize*FluidUtils.B), 0.75);
     }
 }
