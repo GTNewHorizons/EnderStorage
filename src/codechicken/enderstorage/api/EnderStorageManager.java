@@ -14,8 +14,7 @@ import java.util.Map.Entry;
 
 import codechicken.lib.config.ConfigFile;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -40,12 +39,12 @@ public class EnderStorageManager
         }
 
         @SubscribeEvent
-        public void onPlayerLogin(PlayerLoggedInEvent event) {
+        public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
             instance(false).sendClientInfo(event.player);
         }
 
         @SubscribeEvent
-        public void onPlayerChangedDimension(PlayerLoggedOutEvent event) {
+        public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
             instance(false).sendClientInfo(event.player);
         }
     }
