@@ -8,6 +8,7 @@ import codechicken.enderstorage.common.BlockEnderStorage;
 import codechicken.enderstorage.common.EnderStorageRecipe;
 import codechicken.enderstorage.common.ItemEnderStorage;
 import codechicken.enderstorage.storage.item.ItemEnderPouch;
+import codechicken.enderstorage.storage.item.ItemEnderViewer;
 import codechicken.enderstorage.storage.item.TileEnderChest;
 import codechicken.enderstorage.storage.liquid.TankSynchroniser;
 import codechicken.enderstorage.storage.liquid.TileEnderTank;
@@ -23,10 +24,14 @@ public class EnderStorageProxy
         blockEnderChest.setBlockName("enderchest");
         GameRegistry.registerBlock(blockEnderChest, ItemEnderStorage.class, "enderChest");
         MinecraftForge.EVENT_BUS.register(blockEnderChest);
-        
+
         itemEnderPouch = new ItemEnderPouch();
         itemEnderPouch.setUnlocalizedName("enderpouch");
         GameRegistry.registerItem(itemEnderPouch, "enderPouch");
+
+        itemEnderViewer = new ItemEnderViewer();
+        itemEnderViewer.setUnlocalizedName("enderviewer");
+        GameRegistry.registerItem(itemEnderViewer, "enderviewer");
         
         GameRegistry.registerTileEntity(TileEnderChest.class, "Ender Chest");
         GameRegistry.registerTileEntity(TileEnderTank.class, "Ender Tank");

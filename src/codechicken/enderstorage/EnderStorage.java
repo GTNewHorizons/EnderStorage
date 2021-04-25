@@ -18,6 +18,7 @@ import codechicken.enderstorage.storage.EnderItemStoragePlugin;
 import codechicken.enderstorage.storage.EnderLiquidStoragePlugin;
 import codechicken.enderstorage.storage.item.CommandEnderStorage;
 import codechicken.enderstorage.storage.item.ItemEnderPouch;
+import codechicken.enderstorage.storage.item.ItemEnderViewer;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
@@ -35,6 +36,7 @@ public class EnderStorage
 
     public static BlockEnderStorage blockEnderChest;
     public static ItemEnderPouch itemEnderPouch;
+    public static ItemEnderViewer itemEnderViewer;
 
     public static Item personalItem;
     public static boolean disableVanillaEnderChest;
