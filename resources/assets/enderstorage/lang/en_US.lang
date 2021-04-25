@@ -1,9 +1,30 @@
 tile.enderchest|0.name=Ender Chest
 tile.enderchest|1.name=Ender Tank
 item.enderpouch.name=Ender Pouch
+item.enderviewer.name=Ender Viewer
 enderstorage.serverop=Operator
 
 enderstorage.command.usage=enderstorage <freq>|(<colour> <colour> <colour>) [owner]
 enderstorage.command.no_arguments=Invalid number of arguments
 enderstorage.command.no_freq=Invalid freq
 enderstorage.command.no_colour=Invalid color: %s
+
+enderstorage.modes.Fluid_Global=Public Fluid Mode
+enderstorage.modes.Fluid_Self=Private Fluid Mode
+
+enderstorage.colo.white=White
+enderstorage.colo.orange=Orange
+enderstorage.colo.magenta=Magenta
+enderstorage.colo.lblue=LBlue
+enderstorage.colo.yellow=Yellow
+enderstorage.colo.lime=Lime
+enderstorage.colo.pink=Pink
+enderstorage.colo.gray=Gray
+enderstorage.colo.lgray=LGray
+enderstorage.colo.cyan=Cyan
+enderstorage.colo.purple=Purple
+enderstorage.colo.blue=Blue
+enderstorage.colo.brown=Brown
+enderstorage.colo.green=Green
+enderstorage.colo.red=Red
+enderstorage.colo.black=Black
