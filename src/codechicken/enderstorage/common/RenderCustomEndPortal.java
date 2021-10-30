@@ -52,13 +52,13 @@ public class RenderCustomEndPortal
                 f5 = 65F;
                 f6 = 0.125F;
                 GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(770, 771);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             }
             if(i == 1)
             {
                 r.bindTexture(end_portalTex);
                 GL11.glEnable(GL11.GL_BLEND);
-                GL11.glBlendFunc(1, 1);
+                GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
                 f6 = 0.5F;
             }
             float f8 = (float)(-(posY + surfaceY));
@@ -113,6 +113,7 @@ public class RenderCustomEndPortal
         }
 
         GL11.glDisable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glDisable(GL11.GL_TEXTURE_GEN_S);
         GL11.glDisable(GL11.GL_TEXTURE_GEN_T);
         GL11.glDisable(GL11.GL_TEXTURE_GEN_R);

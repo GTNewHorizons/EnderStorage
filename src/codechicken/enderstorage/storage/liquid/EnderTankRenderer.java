@@ -114,13 +114,14 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer
             valveModel.render(new UVTranslation(0, owned ? 13/64D : 0));
             CCRenderState.draw();
         GL11.glPopMatrix();
-            
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+
         double time = ClientUtils.getRenderTime()+offset;
         Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
             new Vector3(x+0.5, y+0.45+EnderStorageClientProxy.getPearlBob(time)*2, z+0.5),
             new Rotation(time/3, new Vector3(0, 1, 0)),
             0.04);
-        
+
         GL11.glDisable(GL11.GL_LIGHTING);
         CCRenderState.changeTexture("enderstorage:textures/hedronmap.png");
         CCRenderState.startDrawing(4);

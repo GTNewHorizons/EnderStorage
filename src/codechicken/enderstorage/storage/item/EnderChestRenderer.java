@@ -32,8 +32,8 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         GL11.glColor4f(1, 1, 1, 1);
 
         CCRenderState.changeTexture("enderstorage:textures/enderchest.png");
-        GL11.glPushMatrix();
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        GL11.glPushMatrix();
         GL11.glColor4f(1, 1, 1, 1);
         GL11.glTranslated(x, y + 1.0, z + 1.0F);
         GL11.glScalef(1.0F, -1F, -1F);
@@ -48,6 +48,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         GL11.glTranslated(x, y, z);
         renderButtons(freq, rotation, lidAngle);
         GL11.glPopMatrix();
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 
         double time = ClientUtils.getRenderTime() + offset;
         Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
