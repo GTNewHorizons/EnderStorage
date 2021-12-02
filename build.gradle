@@ -20,10 +20,6 @@ buildscript {
 
 //add dependency repositories
 repositories {
-	maven {
-		name = "chickenbones"
-		url = "http://chickenbones.net/maven"
-	}
     maven {
         url "https://jitpack.io"
     }
