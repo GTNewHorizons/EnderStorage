@@ -25,7 +25,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 
-@Mod(modid = "EnderStorage", dependencies = "required-after:CodeChickenCore@[" + CodeChickenCorePlugin.version + ",)", acceptedMinecraftVersions = CodeChickenCorePlugin.mcVersion)
+@Mod(modid = "EnderStorage", name = "EnderStorage", dependencies = "required-after:CodeChickenCore@[" + CodeChickenCorePlugin.version + ",)", acceptedMinecraftVersions = CodeChickenCorePlugin.mcVersion)
 public class EnderStorage
 {
     @SidedProxy(clientSide = "codechicken.enderstorage.internal.EnderStorageClientProxy", serverSide = "codechicken.enderstorage.internal.EnderStorageProxy")
