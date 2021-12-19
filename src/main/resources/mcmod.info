@@ -1,7 +1,7 @@
 [
 {
-  "modid": "EnderStorage",
-  "name": "EnderStorage",
+  "modid": "${modId}",
+  "name": "${modName}",
   "description": "Stores your stuff in the END!
 
 Credits: Ecu - original idea, design,
@@ -10,8 +10,8 @@ Credits: Ecu - original idea, design,
     Soaryn - tank texture
 
 Supporters: Blkdragon112",
-  "version": "${version}",
-  "mcversion": "${mc_version}",
+  "version": "${modVersion}",
+  "mcversion": "${minecraftVersion}",
   "url": "http://www.minecraftforum.net/topic/909223",
   "authorList": [ "ChickenBones" ],
   "dependencies": [ "CodeChickenCore" ]
