@@ -8,6 +8,7 @@ import codechicken.enderstorage.EnderStorage;
 import codechicken.enderstorage.api.EnderStorageManager;
 import codechicken.enderstorage.storage.item.ItemEnderChestDummy;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 import net.minecraft.block.Block;
@@ -100,7 +101,9 @@ public class EnderStorageRecipe implements IRecipe
         EnderStorageRecipe instance = new EnderStorageRecipe();
         GameRegistry.addRecipe(instance);
         RecipeSorter.register("enderstorage:recolour", EnderStorageRecipe.class, Category.SHAPED, "");
-        addNormalRecipies();
+        if (!Loader.isModLoaded("dreamcraft")) {
+            addNormalRecipies();
+        }
     }
 
     public static void removeVanillaChest() {
