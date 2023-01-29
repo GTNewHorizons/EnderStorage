@@ -10,21 +10,18 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class ItemEnderChestDummy extends ItemBlock
-{
-    public ItemEnderChestDummy()
-    {
+public class ItemEnderChestDummy extends ItemBlock {
+
+    public ItemEnderChestDummy() {
         super(Blocks.ender_chest);
     }
 
     @Override
-    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
-    {
+    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
+            float hitX, float hitY, float hitZ, int metadata) {
         return false;
     }
-    
+
     @Override
-    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List)
-    {
-    }
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {}
 }

@@ -2,13 +2,14 @@ package codechicken.enderstorage.internal;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import codechicken.lib.packet.PacketCustom;
-import codechicken.lib.packet.PacketCustom.IServerPacketHandler;
-import codechicken.enderstorage.storage.liquid.TankSynchroniser;
 import net.minecraft.network.play.INetHandlerPlayServer;
 
-public class EnderStorageSPH implements IServerPacketHandler
-{
+import codechicken.enderstorage.storage.liquid.TankSynchroniser;
+import codechicken.lib.packet.PacketCustom;
+import codechicken.lib.packet.PacketCustom.IServerPacketHandler;
+
+public class EnderStorageSPH implements IServerPacketHandler {
+
     public static final String channel = "ES";
 
     @Override

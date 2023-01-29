@@ -1,23 +1,24 @@
 package codechicken.enderstorage.storage.liquid;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
+
 import codechicken.core.fluid.ExtendedFluidTank;
 import codechicken.core.fluid.FluidUtils;
 import codechicken.enderstorage.EnderStorage;
 import codechicken.enderstorage.api.AbstractEnderStorage;
 import codechicken.enderstorage.api.EnderStorageManager;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fluids.FluidStack;
 
-public class EnderLiquidStorage extends AbstractEnderStorage implements IFluidHandler
-{
+public class EnderLiquidStorage extends AbstractEnderStorage implements IFluidHandler {
+
     public static final int CAPACITY = EnderStorage.enderTankSize * FluidUtils.B;
-    
-    private class Tank extends ExtendedFluidTank
-    {
+
+    private class Tank extends ExtendedFluidTank {
+
         public Tank(int capacity) {
             super(capacity);
         }
@@ -78,7 +79,7 @@ public class EnderLiquidStorage extends AbstractEnderStorage implements IFluidHa
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        return new FluidTankInfo[]{tank.getInfo()};
+        return new FluidTankInfo[] { tank.getInfo() };
     }
 
     public FluidStack getFluid() {

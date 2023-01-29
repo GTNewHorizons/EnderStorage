@@ -4,14 +4,13 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 
 public class ModelEnderChest extends ModelBase {
-    
+
     public ModelRenderer chestLid;
     public ModelRenderer chestBelow;
     public ModelRenderer chestKnob;
     public ModelRenderer diamondKnob;
 
-    public ModelEnderChest()
-    {
+    public ModelEnderChest() {
         chestLid = new ModelRenderer(this, 0, 0).setTextureSize(64, 64);
         chestLid.addBox(0.0F, -5F, -14F, 14, 5, 14, 0.0F);
         chestLid.rotationPointX = 1.0F;
@@ -34,15 +33,12 @@ public class ModelEnderChest extends ModelBase {
         chestBelow.rotationPointZ = 1.0F;
     }
 
-    public void render(boolean personal)
-    {
+    public void render(boolean personal) {
         chestKnob.rotateAngleX = chestLid.rotateAngleX;
         diamondKnob.rotateAngleX = chestLid.rotateAngleX;
         chestLid.render(0.0625F);
         chestBelow.render(0.0625F);
-        if(personal)
-            diamondKnob.render(0.0625F);
-        else
-            chestKnob.render(0.0625F);
+        if (personal) diamondKnob.render(0.0625F);
+        else chestKnob.render(0.0625F);
     }
 }

@@ -1,5 +1,7 @@
 package codechicken.enderstorage.storage.liquid;
 
+import static codechicken.lib.vec.Vector3.*;
+
 import java.util.List;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -8,11 +10,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fluids.FluidStack;
-import codechicken.lib.math.MathHelper;
+
 import codechicken.core.fluid.FluidUtils;
+import codechicken.enderstorage.api.EnderStorageManager;
+import codechicken.enderstorage.common.TileFrequencyOwner;
+import codechicken.enderstorage.internal.EnderStorageSPH;
+import codechicken.enderstorage.storage.liquid.TankSynchroniser.TankState;
+import codechicken.lib.math.MathHelper;
 import codechicken.lib.packet.PacketCustom;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.vec.Cuboid6;
@@ -21,17 +28,11 @@ import codechicken.lib.vec.Scale;
 import codechicken.lib.vec.Transformation;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
-import codechicken.enderstorage.api.EnderStorageManager;
-import codechicken.enderstorage.common.TileFrequencyOwner;
-import codechicken.enderstorage.internal.EnderStorageSPH;
-import codechicken.enderstorage.storage.liquid.TankSynchroniser.TankState;
 
-import static codechicken.lib.vec.Vector3.*;
+public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler {
 
-public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler
-{
-    public class EnderTankState extends TankState
-    {
+    public class EnderTankState extends TankState {
+
         @Override
         public void sendSyncPacket() {
             PacketCustom packet = new PacketCustom(EnderStorageSPH.channel, 5);
@@ -46,8 +47,8 @@ public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler
         }
     }
 
-    public class PressureState
-    {
+    public class PressureState {
+
         public boolean invert_redstone;
         public boolean a_pressure;
         public boolean b_pressure;
@@ -62,8 +63,7 @@ public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler
             } else {
                 b_pressure = a_pressure;
                 a_pressure = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord) != invert_redstone;
-                if (a_pressure != b_pressure)
-                    sendSyncPacket();
+                if (a_pressure != b_pressure) sendSyncPacket();
             }
         }
 
@@ -107,8 +107,7 @@ public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler
         super.updateEntity();
 
         pressure_state.update(worldObj.isRemote);
-        if (pressure_state.a_pressure)
-            ejectLiquid();
+        if (pressure_state.a_pressure) ejectLiquid();
 
         liquid_state.update(worldObj.isRemote);
     }
@@ -116,23 +115,20 @@ public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler
     private void ejectLiquid() {
         for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
             TileEntity t = worldObj.getTileEntity(xCoord + side.offsetX, yCoord + side.offsetY, zCoord + side.offsetZ);
-            if (!(t instanceof IFluidHandler))
-                continue;
+            if (!(t instanceof IFluidHandler)) continue;
 
             IFluidHandler c = (IFluidHandler) t;
             FluidStack liquid = drain(null, 100, false);
-            if (liquid == null)
-                continue;
+            if (liquid == null) continue;
             int qty = c.fill(side.getOpposite(), liquid, true);
-            if (qty > 0)
-                drain(null, qty, true);
+            if (qty > 0) drain(null, qty, true);
         }
     }
 
     public void reloadStorage() {
-        storage = (EnderLiquidStorage) EnderStorageManager.instance(worldObj.isRemote).getStorage(owner, freq, "liquid");
-        if (!worldObj.isRemote)
-            liquid_state.reloadStorage(storage);
+        storage = (EnderLiquidStorage) EnderStorageManager.instance(worldObj.isRemote)
+                .getStorage(owner, freq, "liquid");
+        if (!worldObj.isRemote) liquid_state.reloadStorage(storage);
     }
 
     @Override
@@ -167,8 +163,8 @@ public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler
 
     @Override
     public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-        if(worldObj.isRemote)
-            return new FluidTankInfo[]{new FluidTankInfo(liquid_state.s_liquid, EnderLiquidStorage.CAPACITY)};
+        if (worldObj.isRemote)
+            return new FluidTankInfo[] { new FluidTankInfo(liquid_state.s_liquid, EnderLiquidStorage.CAPACITY) };
 
         return storage.getTankInfo(from);
     }
@@ -219,8 +215,8 @@ public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler
             pressure_state.invert();
             return true;
         }
-        return FluidUtils.fillTankWithContainer(this, player) ||
-                FluidUtils.emptyTankIntoContainer(this, player, storage.getFluid());
+        return FluidUtils.fillTankWithContainer(this, player)
+                || FluidUtils.emptyTankIntoContainer(this, player, storage.getFluid());
     }
 
     @Override
@@ -228,9 +224,10 @@ public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler
         Vector3 pos = new Vector3(xCoord, yCoord, zCoord);
         cuboids.add(new IndexedCuboid6(0, new Cuboid6(0.15, 0, 0.15, 0.85, 0.916, 0.85).add(pos)));
 
-        for (int i = 0; i < 4; i++)
-            cuboids.add(new IndexedCuboid6(i + 1, selectionBoxes[i].copy()
-                    .apply(Rotation.quarterRotations[rotation ^ 2].at(center)).add(pos)));
+        for (int i = 0; i < 4; i++) cuboids.add(
+                new IndexedCuboid6(
+                        i + 1,
+                        selectionBoxes[i].copy().apply(Rotation.quarterRotations[rotation ^ 2].at(center)).add(pos)));
     }
 
     @Override
@@ -247,10 +244,8 @@ public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler
     }
 
     public void sync(PacketCustom packet) {
-        if (packet.getType() == 5)
-            liquid_state.sync(packet.readFluidStack());
-        else if (packet.getType() == 6)
-            pressure_state.a_pressure = packet.readBoolean();
+        if (packet.getType() == 5) liquid_state.sync(packet.readFluidStack());
+        else if (packet.getType() == 6) pressure_state.a_pressure = packet.readBoolean();
     }
 
     @Override

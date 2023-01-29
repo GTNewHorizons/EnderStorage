@@ -1,15 +1,16 @@
 package codechicken.enderstorage.storage.item;
 
-import codechicken.core.commands.PlayerCommand;
-import codechicken.enderstorage.api.EnderStorageManager;
-import codechicken.enderstorage.common.EnderStorageRecipe;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.WorldServer;
 
-public class CommandEnderStorage extends PlayerCommand
-{
+import codechicken.core.commands.PlayerCommand;
+import codechicken.enderstorage.api.EnderStorageManager;
+import codechicken.enderstorage.common.EnderStorageRecipe;
+
+public class CommandEnderStorage extends PlayerCommand {
+
     @Override
     public String getCommandName() {
         return "enderstorage";
@@ -57,8 +58,7 @@ public class CommandEnderStorage extends PlayerCommand
 
         String owner = args.length % 2 == 1 ? "global" : args[args.length - 1];
 
-        ((EnderItemStorage) EnderStorageManager.instance(world.isRemote)
-                .getStorage(owner, freq, "item"))
+        ((EnderItemStorage) EnderStorageManager.instance(world.isRemote).getStorage(owner, freq, "item"))
                 .openSMPGui(player, "enderstorage.serverop");
     }
 

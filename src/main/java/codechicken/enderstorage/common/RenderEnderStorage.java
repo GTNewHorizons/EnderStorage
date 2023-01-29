@@ -4,17 +4,15 @@ import codechicken.lib.render.CCModel;
 import codechicken.lib.render.Vertex5;
 import codechicken.lib.vec.Vector3;
 
-public class RenderEnderStorage
-{
+public class RenderEnderStorage {
+
     public static CCModel button;
-    
-    static
-    {
+
+    static {
         generateButton();
     }
 
-    private static void generateButton()
-    {
+    private static void generateButton() {
         button = CCModel.quadModel(20);
         Vector3 min = TileFrequencyOwner.selection_button.min;
         Vector3 max = TileFrequencyOwner.selection_button.max;
@@ -27,10 +25,10 @@ public class RenderEnderStorage
         corners[5] = new Vector3(max.x, min.y, max.z);
         corners[7] = new Vector3(min.x, max.y, max.z);
         corners[6] = new Vector3(max.x, max.y, max.z);
-        
+
         int i = 0;
         Vertex5[] verts = button.verts;
-        
+
         verts[i++] = new Vertex5(corners[7], 0.0938, 0.0625);
         verts[i++] = new Vertex5(corners[6], 0.1562, 0.0625);
         verts[i++] = new Vertex5(corners[2], 0.1562, 0.1875);
@@ -40,7 +38,7 @@ public class RenderEnderStorage
         verts[i++] = new Vertex5(corners[5], 0.1562, 0.0624);
         verts[i++] = new Vertex5(corners[6], 0.1562, 0.0624);
         verts[i++] = new Vertex5(corners[7], 0.0938, 0.0313);
-        
+
         verts[i++] = new Vertex5(corners[0], 0.0938, 0.2186);
         verts[i++] = new Vertex5(corners[3], 0.0938, 0.1876);
         verts[i++] = new Vertex5(corners[2], 0.1562, 0.1876);
@@ -55,7 +53,7 @@ public class RenderEnderStorage
         verts[i++] = new Vertex5(corners[3], 0.0937, 0.1874);
         verts[i++] = new Vertex5(corners[0], 0.0626, 0.1874);
         verts[i++] = new Vertex5(corners[4], 0.0626, 0.0626);
-        
+
         button.computeNormals();
     }
 }

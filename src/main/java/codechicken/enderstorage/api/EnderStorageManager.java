@@ -12,30 +12,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import codechicken.lib.config.ConfigFile;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.event.world.WorldEvent.Save;
 
-public class EnderStorageManager
-{
-    public static class EnderStorageSaveHandler
-    {
+import codechicken.lib.config.ConfigFile;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
+
+public class EnderStorageManager {
+
+    public static class EnderStorageSaveHandler {
+
         @SubscribeEvent
         public void onWorldLoad(Load event) {
-            if (event.world.isRemote)
-                reloadManager(true);
+            if (event.world.isRemote) reloadManager(true);
         }
 
         @SubscribeEvent
         public void onWorldSave(Save event) {
-            if (!event.world.isRemote && instance(false) != null)
-                instance(false).save(false);
+            if (!event.world.isRemote && instance(false) != null) instance(false).save(false);
         }
 
         @SubscribeEvent
@@ -71,11 +70,9 @@ public class EnderStorageManager
         storageList = Collections.synchronizedMap(new HashMap<String, List<AbstractEnderStorage>>());
         dirtyStorage = Collections.synchronizedList(new LinkedList<AbstractEnderStorage>());
 
-        for (String key : plugins.keySet())
-            storageList.put(key, new ArrayList<AbstractEnderStorage>());
+        for (String key : plugins.keySet()) storageList.put(key, new ArrayList<AbstractEnderStorage>());
 
-        if (!client)
-            load();
+        if (!client) load();
     }
 
     private void sendClientInfo(EntityPlayer player) {
@@ -86,9 +83,9 @@ public class EnderStorageManager
     private void load() {
         saveDir = new File(DimensionManager.getCurrentSaveRootDirectory(), "EnderStorage");
         try {
-            if (!saveDir.exists())
-                saveDir.mkdirs();
-            saveFiles = new File[]{new File(saveDir, "data1.dat"), new File(saveDir, "data2.dat"), new File(saveDir, "lock.dat")};
+            if (!saveDir.exists()) saveDir.mkdirs();
+            saveFiles = new File[] { new File(saveDir, "data1.dat"), new File(saveDir, "data2.dat"),
+                    new File(saveDir, "lock.dat") };
             if (saveFiles[2].exists() && saveFiles[2].length() > 0) {
                 FileInputStream fin = new FileInputStream(saveFiles[2]);
                 saveTo = fin.read() ^ 1;
@@ -101,8 +98,7 @@ public class EnderStorageManager
                 } else {
                     saveTag = new NBTTagCompound();
                 }
-            } else
-                saveTag = new NBTTagCompound();
+            } else saveTag = new NBTTagCompound();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -119,8 +115,7 @@ public class EnderStorageManager
 
             try {
                 File saveFile = saveFiles[saveTo];
-                if (!saveFile.exists())
-                    saveFile.createNewFile();
+                if (!saveFile.exists()) saveFile.createNewFile();
                 DataOutputStream dout = new DataOutputStream(new FileOutputStream(saveFile));
                 CompressedStreamTools.writeCompressed(saveTag, dout);
                 dout.close();
@@ -136,10 +131,8 @@ public class EnderStorageManager
 
     public static void reloadManager(boolean client) {
         EnderStorageManager newManager = new EnderStorageManager(client);
-        if (client)
-            clientManager = newManager;
-        else
-            serverManager = newManager;
+        if (client) clientManager = newManager;
+        else serverManager = newManager;
     }
 
     public File getSaveDir() {
@@ -151,14 +144,12 @@ public class EnderStorageManager
     }
 
     public AbstractEnderStorage getStorage(String owner, int freq, String type) {
-        if (owner == null)
-            owner = "global";
+        if (owner == null) owner = "global";
         String key = freq + "|" + owner + "|" + type;
         AbstractEnderStorage storage = storageMap.get(key);
         if (storage == null) {
             storage = plugins.get(type).createEnderStorage(this, owner, freq);
-            if (!client && saveTag.hasKey(key))
-                storage.loadFromTag(saveTag.getCompoundTag(key));
+            if (!client && saveTag.hasKey(key)) storage.loadFromTag(saveTag.getCompoundTag(key));
             storageMap.put(key, storage);
             storageList.get(type).add(storage);
         }
@@ -202,8 +193,7 @@ public class EnderStorageManager
 
     public static void registerPlugin(EnderStoragePlugin plugin) {
         plugins.put(plugin.identifer(), plugin);
-        if (config != null)
-            plugin.loadConfig(config.getTag(plugin.identifer()));
+        if (config != null) plugin.loadConfig(config.getTag(plugin.identifer()));
 
         if (serverManager != null)
             serverManager.storageList.put(plugin.identifer(), new ArrayList<AbstractEnderStorage>());

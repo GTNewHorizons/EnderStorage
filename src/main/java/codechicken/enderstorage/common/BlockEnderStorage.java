@@ -4,32 +4,21 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import codechicken.lib.raytracer.RayTracer;
-import codechicken.lib.raytracer.IndexedCuboid6;
-import codechicken.lib.vec.BlockCoord;
-import codechicken.lib.vec.Vector3;
-import codechicken.enderstorage.EnderStorage;
-import codechicken.enderstorage.api.EnderStorageManager;
-import codechicken.enderstorage.storage.item.TileEnderChest;
-import codechicken.enderstorage.storage.liquid.TileEnderTank;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.block.material.Material;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -38,8 +27,20 @@ import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockEnderStorage extends BlockContainer
-{
+import codechicken.enderstorage.EnderStorage;
+import codechicken.enderstorage.api.EnderStorageManager;
+import codechicken.enderstorage.storage.item.TileEnderChest;
+import codechicken.enderstorage.storage.liquid.TileEnderTank;
+import codechicken.lib.raytracer.IndexedCuboid6;
+import codechicken.lib.raytracer.RayTracer;
+import codechicken.lib.vec.BlockCoord;
+import codechicken.lib.vec.Vector3;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+public class BlockEnderStorage extends BlockContainer {
+
     private RayTracer rayTracer = new RayTracer();
 
     public BlockEnderStorage() {
@@ -70,8 +71,7 @@ public class BlockEnderStorage extends BlockContainer
     private ItemStack createItem(int meta, int freq, String owner) {
         ItemStack stack = new ItemStack(this, 1, freq | meta << 12);
         if (!owner.equals("global")) {
-            if (!stack.hasTagCompound())
-                stack.setTagCompound(new NBTTagCompound());
+            if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
             stack.getTagCompound().setString("owner", owner);
         }
         return stack;
@@ -110,28 +110,27 @@ public class BlockEnderStorage extends BlockContainer
         TileFrequencyOwner tile = (TileFrequencyOwner) world.getTileEntity(i, j, k);
         if (tile != null) {
             ret.add(createItem(meta, tile.freq, EnderStorage.anarchyMode ? "global" : tile.owner));
-            if(EnderStorage.anarchyMode && !tile.owner.equals("global"))
-                ret.add(EnderStorage.getPersonalItem());
+            if (EnderStorage.anarchyMode && !tile.owner.equals("global")) ret.add(EnderStorage.getPersonalItem());
         }
 
         return ret;
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote)
-            return true;
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX,
+            float hitY, float hitZ) {
+        if (world.isRemote) return true;
 
         MovingObjectPosition hit = RayTracer.retraceBlock(world, player, x, y, z);
         TileFrequencyOwner tile = (TileFrequencyOwner) world.getTileEntity(x, y, z);
 
-        if (hit == null)
-            return false;
+        if (hit == null) return false;
 
         if (hit.subHit == 4) {
             ItemStack item = player.inventory.getCurrentItem();
             if (player.isSneaking() && !tile.owner.equals("global")) {
-                if (!player.capabilities.isCreativeMode && !player.inventory.addItemStackToInventory(EnderStorage.getPersonalItem()))
+                if (!player.capabilities.isCreativeMode
+                        && !player.inventory.addItemStackToInventory(EnderStorage.getPersonalItem()))
                     return false;
 
                 tile.setOwner("global");
@@ -139,8 +138,7 @@ public class BlockEnderStorage extends BlockContainer
             } else if (item != null && item.getItem() == EnderStorage.getPersonalItem().getItem()) {
                 if (tile.owner.equals("global")) {
                     tile.setOwner(player.getCommandSenderName());
-                    if (!player.capabilities.isCreativeMode)
-                        item.stackSize--;
+                    if (!player.capabilities.isCreativeMode) item.stackSize--;
                     return true;
                 }
             }
@@ -153,8 +151,7 @@ public class BlockEnderStorage extends BlockContainer
                 if (colours[hit.subHit - 1] == (~dye & 0xF)) return false;
                 colours[hit.subHit - 1] = ~dye & 0xF;
                 tile.setFreq(EnderStorageManager.getFreqFromColours(colours));
-                if (!player.capabilities.isCreativeMode)
-                    item.stackSize--;
+                if (!player.capabilities.isCreativeMode) item.stackSize--;
                 return true;
             }
         }
@@ -168,7 +165,8 @@ public class BlockEnderStorage extends BlockContainer
     }
 
     @Override
-    public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity entity) {
+    public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist,
+            Entity entity) {
         setBlockBounds(0, 0, 0, 1, 1, 1);
         super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, entity);
     }
@@ -182,8 +180,7 @@ public class BlockEnderStorage extends BlockContainer
     @Override
     public MovingObjectPosition collisionRayTrace(World world, int x, int y, int z, Vec3 start, Vec3 end) {
         TileFrequencyOwner tile = (TileFrequencyOwner) world.getTileEntity(x, y, z);
-        if (tile == null)
-            return null;
+        if (tile == null) return null;
 
         List<IndexedCuboid6> cuboids = new LinkedList<IndexedCuboid6>();
         tile.addTraceableCuboids(cuboids);
@@ -199,8 +196,7 @@ public class BlockEnderStorage extends BlockContainer
     @Override
     public int getLightValue(IBlockAccess world, int x, int y, int z) {
         TileEntity tile = world.getTileEntity(x, y, z);
-        if (tile instanceof TileFrequencyOwner)
-            return ((TileFrequencyOwner) tile).getLightValue();
+        if (tile instanceof TileFrequencyOwner) return ((TileFrequencyOwner) tile).getLightValue();
         return 0;
     }
 
@@ -213,8 +209,15 @@ public class BlockEnderStorage extends BlockContainer
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onBlockHighlight(DrawBlockHighlightEvent event) {
-        if (event.target.typeOfHit == MovingObjectType.BLOCK && event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ) == this)
-            RayTracer.retraceBlock(event.player.worldObj, event.player, event.target.blockX, event.target.blockY, event.target.blockZ);
+        if (event.target.typeOfHit == MovingObjectType.BLOCK
+                && event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ)
+                        == this)
+            RayTracer.retraceBlock(
+                    event.player.worldObj,
+                    event.player,
+                    event.target.blockX,
+                    event.target.blockY,
+                    event.target.blockZ);
     }
 
     @Override
@@ -230,8 +233,7 @@ public class BlockEnderStorage extends BlockContainer
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister par1IconRegister) {
-    }
+    public void registerBlockIcons(IIconRegister par1IconRegister) {}
 
     @Override
     public boolean hasComparatorInputOverride() {

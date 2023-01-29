@@ -2,33 +2,43 @@ package codechicken.enderstorage.storage.item;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
 import codechicken.core.ClientUtils;
+import codechicken.enderstorage.EnderStorage;
+import codechicken.enderstorage.api.EnderStorageManager;
+import codechicken.enderstorage.common.RenderCustomEndPortal;
+import codechicken.enderstorage.internal.EnderStorageClientProxy;
 import codechicken.lib.render.CCModelLibrary;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Vector3;
-import codechicken.enderstorage.EnderStorage;
-import codechicken.enderstorage.api.EnderStorageManager;
-import codechicken.enderstorage.common.RenderCustomEndPortal;
-import codechicken.enderstorage.internal.EnderStorageClientProxy;
 
 public class EnderChestRenderer extends TileEntitySpecialRenderer {
+
     private static ModelEnderChest model = new ModelEnderChest();
 
-    public EnderChestRenderer() {
-    }
+    public EnderChestRenderer() {}
 
-    public static void renderChest(int rotation, int freq, boolean owned, double x, double y, double z, int offset, float lidAngle) {
-    	if (!EnderStorage.disableFXChest) {
-    		TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
-    		renderEndPortal.render(x, y, z, 0, info.field_147560_j, info.field_147560_j, info.field_147561_k, info.field_147553_e);
-    	}
+    public static void renderChest(int rotation, int freq, boolean owned, double x, double y, double z, int offset,
+            float lidAngle) {
+        if (!EnderStorage.disableFXChest) {
+            TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
+            renderEndPortal.render(
+                    x,
+                    y,
+                    z,
+                    0,
+                    info.field_147560_j,
+                    info.field_147560_j,
+                    info.field_147561_k,
+                    info.field_147553_e);
+        }
         GL11.glColor4f(1, 1, 1, 1);
 
         CCRenderState.changeTexture("enderstorage:textures/enderchest.png");
@@ -124,8 +134,15 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         CCRenderState.useNormals = true;
 
         TileEnderChest chest = (TileEnderChest) tile;
-        renderChest(chest.rotation, chest.freq, !chest.owner.equals("global"), d, d1, d2,
-                EnderStorageClientProxy.getTimeOffset(chest.xCoord, chest.yCoord, chest.zCoord), (float) chest.getRadianLidAngle(f));
+        renderChest(
+                chest.rotation,
+                chest.freq,
+                !chest.owner.equals("global"),
+                d,
+                d1,
+                d2,
+                EnderStorageClientProxy.getTimeOffset(chest.xCoord, chest.yCoord, chest.zCoord),
+                (float) chest.getRadianLidAngle(f));
     }
 
     public static final double phi = 1.618034;

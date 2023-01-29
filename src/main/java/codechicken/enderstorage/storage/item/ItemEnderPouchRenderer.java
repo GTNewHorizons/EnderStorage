@@ -1,32 +1,28 @@
 package codechicken.enderstorage.storage.item;
 
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.item.ItemStack;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 
-public class ItemEnderPouchRenderer implements IItemRenderer
-{
+import org.lwjgl.opengl.GL11;
+
+public class ItemEnderPouchRenderer implements IItemRenderer {
+
     @Override
-    public boolean handleRenderType(ItemStack item, ItemRenderType type)
-    {
+    public boolean handleRenderType(ItemStack item, ItemRenderType type) {
         return true;
     }
 
     @Override
-    public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper)
-    {
-        return helper == ItemRendererHelper.ENTITY_BOBBING ;
+    public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
+        return helper == ItemRendererHelper.ENTITY_BOBBING;
     }
 
     @SuppressWarnings("incomplete-switch")
     @Override
-    public void renderItem(ItemRenderType type, ItemStack item, Object... data)
-    {
+    public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
         GL11.glPushMatrix();
-        switch(type)
-        {
+        switch (type) {
             case INVENTORY:
                 GL11.glScalef(16, 16, 0);
                 break;
