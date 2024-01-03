@@ -25,8 +25,8 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
     public EnderChestRenderer() {}
 
-    public static void renderChest(int rotation, int freq, boolean owned, double x, double y, double z, int offset,
-            float lidAngle) {
+    public static void renderChest(CCRenderState state, int rotation, int freq, boolean owned, double x, double y,
+            double z, int offset, float lidAngle) {
         if (!EnderStorage.disableFXChest) {
             TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
             renderEndPortal.render(
@@ -41,7 +41,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         }
         GL11.glColor4f(1, 1, 1, 1);
 
-        CCRenderState.changeTexture("enderstorage:textures/enderchest.png");
+        state.changeTexture("enderstorage:textures/enderchest.png");
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glPushMatrix();
         GL11.glColor4f(1, 1, 1, 1);
@@ -67,10 +67,10 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
                 0.04);
 
         GL11.glDisable(GL11.GL_LIGHTING);
-        CCRenderState.changeTexture("enderstorage:textures/hedronmap.png");
-        CCRenderState.startDrawing(4);
+        state.changeTexture("enderstorage:textures/hedronmap.png");
+        state.startDrawing(4);
         CCModelLibrary.icosahedron4.render(pearlMat);
-        CCRenderState.draw();
+        state.draw();
         GL11.glEnable(GL11.GL_LIGHTING);
     }
 
@@ -129,12 +129,14 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
     }
 
     public void renderTileEntityAt(TileEntity tile, double d, double d1, double d2, float f) {
-        CCRenderState.reset();
-        CCRenderState.setBrightness(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
-        CCRenderState.useNormals = true;
+        final CCRenderState state = CCRenderState.instance();
+        state.reset();
+        state.setBrightness(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+        state.useNormals = true;
 
         TileEnderChest chest = (TileEnderChest) tile;
         renderChest(
+                state,
                 chest.rotation,
                 chest.freq,
                 !chest.owner.equals("global"),

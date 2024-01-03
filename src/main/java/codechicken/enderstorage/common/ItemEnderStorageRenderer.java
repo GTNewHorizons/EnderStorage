@@ -31,15 +31,16 @@ public class ItemEnderStorageRenderer implements IItemRenderer {
         int rotation = 0;
         if (type == ItemRenderType.ENTITY) rotation = 3;
 
+        final CCRenderState state = CCRenderState.instance();
         switch (item.getItemDamage() >> 12) {
             case 0:
-                EnderChestRenderer.renderChest(rotation, freq, !owner.equals("global"), d.x, d.y, d.z, 0, 0);
+                EnderChestRenderer.renderChest(state, rotation, freq, !owner.equals("global"), d.x, d.y, d.z, 0, 0);
                 break;
             case 1:
-                CCRenderState.reset();
-                CCRenderState.pullLightmap();
-                CCRenderState.useNormals = true;
-                EnderTankRenderer.renderTank(rotation, 0, freq, !owner.equals("global"), d.x, d.y, d.z, 0);
+                state.reset();
+                state.pullLightmap();
+                state.useNormals = true;
+                EnderTankRenderer.renderTank(state, rotation, 0, freq, !owner.equals("global"), d.x, d.y, d.z, 0);
                 EnderTankRenderer.renderLiquid(TankSynchroniser.getClientLiquid(freq, owner), d.x, d.y, d.z);
                 break;
         }

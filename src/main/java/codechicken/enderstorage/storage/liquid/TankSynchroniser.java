@@ -9,6 +9,9 @@ import net.minecraftforge.event.world.WorldEvent.Load;
 import net.minecraftforge.event.world.WorldEvent.Unload;
 import net.minecraftforge.fluids.FluidStack;
 
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
+
 import codechicken.core.ClientUtils;
 import codechicken.core.ServerUtils;
 import codechicken.core.fluid.FluidUtils;
@@ -17,10 +20,6 @@ import codechicken.enderstorage.internal.EnderStorageCPH;
 import codechicken.enderstorage.internal.EnderStorageSPH;
 import codechicken.lib.math.MathHelper;
 import codechicken.lib.packet.PacketCustom;
-
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
-
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
