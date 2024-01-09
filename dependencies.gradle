@@ -4,7 +4,5 @@ dependencies {
     api("com.github.GTNewHorizons:CodeChickenLib:1.2.0:dev")
     api("com.github.GTNewHorizons:CodeChickenCore:1.2.0:dev")
 
-    compileOnly("com.github.GTNewHorizons:NotEnoughItems:2.4.13-GTNH:dev") {
-        transitive = false
-    }
+    devOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.5.3-GTNH:dev")
 }
