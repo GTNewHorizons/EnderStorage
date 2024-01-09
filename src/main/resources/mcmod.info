@@ -2,14 +2,9 @@
 {
   "modid": "${modId}",
   "name": "${modName}",
-  "description": "Stores your stuff in the END!
-
-Credits: Ecu - original idea, design,
-        chest and pouch texture
-    Rosethorns - tank model
-    Soaryn - tank texture
-
-Supporters: Blkdragon112",
+  "description": "Stores your stuff in the END!",
+  "Credits": "Ecu - original idea, design, chest and pouch texture. Rosethorns - tank model. Soaryn - tank texture",
+  "Supporters": "Blkdragon112",
   "version": "${modVersion}",
   "mcversion": "${minecraftVersion}",
   "url": "http://www.minecraftforum.net/topic/909223",
