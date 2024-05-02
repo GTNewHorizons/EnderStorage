@@ -22,7 +22,7 @@ import codechicken.lib.vec.Vector3;
 public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
     private static ModelEnderChest model = new ModelEnderChest();
-    static Vector3 Y =  new Vector3(0, 1, 0);
+    static Vector3 Y = new Vector3(0, 1, 0);
 
     public EnderChestRenderer() {}
 

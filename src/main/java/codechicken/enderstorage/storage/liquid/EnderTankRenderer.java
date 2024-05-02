@@ -41,13 +41,12 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
 
     static UVTranslation[] UVTranslationButtons = new UVTranslation[16];
     static UVTranslation UVTvalveOwned = new UVTranslation(0, 13 / 64D);
-    static UVTranslation UVTvalveNotOwned = new UVTranslation(0,  0);
-    static Vector3 Y = new Vector3(0,1,0);
+    static UVTranslation UVTvalveNotOwned = new UVTranslation(0, 0);
+    static Vector3 Y = new Vector3(0, 1, 0);
     static Vector3 Z = new Vector3(0, 0, 1);
     static Vector3 point = new Vector3(0, 0.4165, 0);
 
     static Cuboid6 cuboidFLuid = new Cuboid6(0.22, 0.12, 0.22, 0.78, 0.121 + 0.63, 0.78);
-
 
     static RenderCustomEndPortal renderEndPortal = new RenderCustomEndPortal(0.1205, 0.24, 0.76, 0.24, 0.76);
 
@@ -74,7 +73,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         for (int i = 0; i < 3; i++) buttons[i] = RenderEnderStorage.button.copy()
                 .apply(TileEnderTank.buttonT[i].with(new Translation(-0.5, 0, -0.5)));
 
-        for (int colour=0;colour<16;colour++){
+        for (int colour = 0; colour < 16; colour++) {
             UVTranslationButtons[colour] = new UVTranslation(0.25 * (colour % 4), 0.25 * (colour / 4));
         }
     }
