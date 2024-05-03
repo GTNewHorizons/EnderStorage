@@ -35,20 +35,20 @@ import codechicken.lib.vec.Vector3;
 
 public class EnderTankRenderer extends TileEntitySpecialRenderer {
 
-    static CCModel tankModel;
-    static CCModel valveModel;
-    static CCModel[] buttons;
+    static final CCModel tankModel;
+    static final CCModel valveModel;
+    static final CCModel[] buttons;
 
-    static UVTranslation[] UVTranslationButtons = new UVTranslation[16];
-    static UVTranslation UVTvalveOwned = new UVTranslation(0, 13 / 64D);
-    static UVTranslation UVTvalveNotOwned = new UVTranslation(0, 0);
-    static Vector3 Y = new Vector3(0, 1, 0);
-    static Vector3 Z = new Vector3(0, 0, 1);
-    static Vector3 point = new Vector3(0, 0.4165, 0);
+    static final UVTranslation[] UVTranslationButtons = new UVTranslation[16];
+    static final UVTranslation UVTvalveOwned = new UVTranslation(0, 13 / 64D);
+    static final UVTranslation UVTvalveNotOwned = new UVTranslation(0, 0);
+    static final Vector3 Y = new Vector3(0, 1, 0);
+    static final Vector3 Z = new Vector3(0, 0, 1);
+    static final Vector3 point = new Vector3(0, 0.4165, 0);
 
-    static Cuboid6 cuboidFLuid = new Cuboid6(0.22, 0.12, 0.22, 0.78, 0.121 + 0.63, 0.78);
+    static final Cuboid6 cuboidFLuid = new Cuboid6(0.22, 0.12, 0.22, 0.78, 0.121 + 0.63, 0.78);
 
-    static RenderCustomEndPortal renderEndPortal = new RenderCustomEndPortal(0.1205, 0.24, 0.76, 0.24, 0.76);
+    static final RenderCustomEndPortal renderEndPortal = new RenderCustomEndPortal(0.1205, 0.24, 0.76, 0.24, 0.76);
 
     static {
         Map<String, CCModel> models = CCModel
