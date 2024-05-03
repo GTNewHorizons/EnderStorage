@@ -35,10 +35,20 @@ import codechicken.lib.vec.Vector3;
 
 public class EnderTankRenderer extends TileEntitySpecialRenderer {
 
-    static CCModel tankModel;
-    static CCModel valveModel;
-    static CCModel[] buttons;
-    static RenderCustomEndPortal renderEndPortal = new RenderCustomEndPortal(0.1205, 0.24, 0.76, 0.24, 0.76);
+    static final CCModel tankModel;
+    static final CCModel valveModel;
+    static final CCModel[] buttons;
+
+    static final UVTranslation[] UVTranslationButtons = new UVTranslation[16];
+    static final UVTranslation UVTvalveOwned = new UVTranslation(0, 13 / 64D);
+    static final UVTranslation UVTvalveNotOwned = new UVTranslation(0, 0);
+    static final Vector3 Y = new Vector3(0, 1, 0);
+    static final Vector3 Z = new Vector3(0, 0, 1);
+    static final Vector3 point = new Vector3(0, 0.4165, 0);
+
+    static final Cuboid6 cuboidFLuid = new Cuboid6(0.22, 0.12, 0.22, 0.78, 0.121 + 0.63, 0.78);
+
+    static final RenderCustomEndPortal renderEndPortal = new RenderCustomEndPortal(0.1205, 0.24, 0.76, 0.24, 0.76);
 
     static {
         Map<String, CCModel> models = CCModel
@@ -62,6 +72,10 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         buttons = new CCModel[3];
         for (int i = 0; i < 3; i++) buttons[i] = RenderEnderStorage.button.copy()
                 .apply(TileEnderTank.buttonT[i].with(new Translation(-0.5, 0, -0.5)));
+
+        for (int colour = 0; colour < 16; colour++) {
+            UVTranslationButtons[colour] = new UVTranslation(0.25 * (colour % 4), 0.25 * (colour / 4));
+        }
     }
 
     @Override
@@ -117,15 +131,15 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         state.startDrawing(7);
         for (int i = 0; i < 3; i++) {
             int colour = EnderStorageManager.getColourFromFreq(freq, i);
-            buttons[i].render(new UVTranslation(0.25 * (colour % 4), 0.25 * (colour / 4)));
+            buttons[i].render(UVTranslationButtons[colour]);
         }
         state.draw();
 
-        new Rotation(valve, new Vector3(0, 0, 1)).at(new Vector3(0, 0.4165, 0)).glApply();
+        new Rotation(valve, Z).at(point).glApply();
 
         state.changeTexture("enderstorage:textures/endertank.png");
         state.startDrawing(4);
-        valveModel.render(new UVTranslation(0, owned ? 13 / 64D : 0));
+        valveModel.render(owned ? UVTvalveOwned : UVTvalveNotOwned);
         state.draw();
         GL11.glPopMatrix();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -133,7 +147,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         double time = ClientUtils.getRenderTime() + offset;
         Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
                 new Vector3(x + 0.5, y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2, z + 0.5),
-                new Rotation(time / 3, new Vector3(0, 1, 0)),
+                new Rotation(time / 3, Y),
                 0.04);
 
         GL11.glDisable(GL11.GL_LIGHTING);
@@ -147,7 +161,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
     public static void renderLiquid(FluidStack liquid, double x, double y, double z) {
         RenderUtils.renderFluidCuboid(
                 liquid,
-                new Cuboid6(0.22, 0.12, 0.22, 0.78, 0.121 + 0.63, 0.78).add(new Vector3(x, y, z)),
+                cuboidFLuid.add(new Vector3(x, y, z)),
                 liquid.amount / ((double) EnderStorage.enderTankSize * FluidUtils.B),
                 0.75);
     }

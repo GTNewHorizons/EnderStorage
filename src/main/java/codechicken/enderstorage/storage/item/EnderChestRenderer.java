@@ -21,7 +21,8 @@ import codechicken.lib.vec.Vector3;
 
 public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
-    private static ModelEnderChest model = new ModelEnderChest();
+    private static final ModelEnderChest model = new ModelEnderChest();
+    static final Vector3 Y = new Vector3(0, 1, 0);
 
     public EnderChestRenderer() {}
 
@@ -63,7 +64,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         double time = ClientUtils.getRenderTime() + offset;
         Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
                 new Vector3(x + 0.5, y + 0.2 + lidAngle * -0.5 + EnderStorageClientProxy.getPearlBob(time), z + 0.5),
-                new Rotation(time / 3, new Vector3(0, 1, 0)),
+                new Rotation(time / 3, Y),
                 0.04);
 
         GL11.glDisable(GL11.GL_LIGHTING);
