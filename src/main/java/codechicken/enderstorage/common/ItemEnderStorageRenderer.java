@@ -7,7 +7,6 @@ import codechicken.enderstorage.storage.item.EnderChestRenderer;
 import codechicken.enderstorage.storage.liquid.EnderTankRenderer;
 import codechicken.enderstorage.storage.liquid.TankSynchroniser;
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.vec.Vector3;
 
 public class ItemEnderStorageRenderer implements IItemRenderer {
 
@@ -23,9 +22,18 @@ public class ItemEnderStorageRenderer implements IItemRenderer {
 
     @Override
     public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-        Vector3 d = new Vector3();
-        if (type != ItemRenderType.EQUIPPED_FIRST_PERSON && type != ItemRenderType.EQUIPPED) d.add(-0.5, -0.5, -0.5);
-
+        final double x;
+        final double y;
+        final double z;
+        if (type != ItemRenderType.EQUIPPED_FIRST_PERSON && type != ItemRenderType.EQUIPPED) {
+            x = -0.5;
+            y = -0.5;
+            z = -0.5;
+        } else {
+            x = 0;
+            y = 0;
+            z = 0;
+        }
         int freq = item.getItemDamage() & 0xFFF;
         String owner = item.hasTagCompound() ? item.getTagCompound().getString("owner") : "global";
         int rotation = 0;
@@ -34,14 +42,14 @@ public class ItemEnderStorageRenderer implements IItemRenderer {
         final CCRenderState state = CCRenderState.instance();
         switch (item.getItemDamage() >> 12) {
             case 0:
-                EnderChestRenderer.renderChest(state, rotation, freq, !owner.equals("global"), d.x, d.y, d.z, 0, 0);
+                EnderChestRenderer.renderChest(state, rotation, freq, !owner.equals("global"), x, y, z, 0, 0);
                 break;
             case 1:
                 state.reset();
                 state.pullLightmap();
                 state.useNormals = true;
-                EnderTankRenderer.renderTank(state, rotation, 0, freq, !owner.equals("global"), d.x, d.y, d.z, 0);
-                EnderTankRenderer.renderLiquid(TankSynchroniser.getClientLiquid(freq, owner), d.x, d.y, d.z);
+                EnderTankRenderer.renderTank(state, rotation, 0, freq, !owner.equals("global"), x, y, z, 0);
+                EnderTankRenderer.renderLiquid(TankSynchroniser.getClientLiquid(freq, owner), x, y, z);
                 break;
         }
     }
