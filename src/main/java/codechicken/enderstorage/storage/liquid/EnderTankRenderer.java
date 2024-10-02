@@ -35,20 +35,23 @@ import codechicken.lib.vec.Vector3;
 
 public class EnderTankRenderer extends TileEntitySpecialRenderer {
 
-    static final CCModel tankModel;
-    static final CCModel valveModel;
-    static final CCModel[] buttons;
+    private static final CCModel tankModel;
+    private static final CCModel valveModel;
+    private static final CCModel[] buttons;
 
-    static final UVTranslation[] UVTranslationButtons = new UVTranslation[16];
-    static final UVTranslation UVTvalveOwned = new UVTranslation(0, 13 / 64D);
-    static final UVTranslation UVTvalveNotOwned = new UVTranslation(0, 0);
-    static final Vector3 Y = new Vector3(0, 1, 0);
-    static final Vector3 Z = new Vector3(0, 0, 1);
-    static final Vector3 point = new Vector3(0, 0.4165, 0);
+    private static final UVTranslation[] UVTranslationButtons = new UVTranslation[16];
+    private static final UVTranslation UVTvalveOwned = new UVTranslation(0, 13 / 64D);
+    private static final UVTranslation UVTvalveNotOwned = new UVTranslation(0, 0);
+    private static final Vector3 Y = new Vector3(0, 1, 0);
+    private static final Vector3 Z = new Vector3(0, 0, 1);
+    private static final Vector3 point = new Vector3(0, 0.4165, 0);
 
-    static final Cuboid6 cuboidFLuid = new Cuboid6(0.22, 0.12, 0.22, 0.78, 0.121 + 0.63, 0.78);
-
-    static final RenderCustomEndPortal renderEndPortal = new RenderCustomEndPortal(0.1205, 0.24, 0.76, 0.24, 0.76);
+    private static final RenderCustomEndPortal renderEndPortal = new RenderCustomEndPortal(
+            0.1205,
+            0.24,
+            0.76,
+            0.24,
+            0.76);
 
     static {
         Map<String, CCModel> models = CCModel
@@ -161,7 +164,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
     public static void renderLiquid(FluidStack liquid, double x, double y, double z) {
         RenderUtils.renderFluidCuboid(
                 liquid,
-                cuboidFLuid.add(new Vector3(x, y, z)),
+                new Cuboid6(0.22 + x, 0.12 + y, 0.22 + z, 0.78 + x, 0.121 + 0.63 + y, 0.78 + z),
                 liquid.amount / ((double) EnderStorage.enderTankSize * FluidUtils.B),
                 0.75);
     }
