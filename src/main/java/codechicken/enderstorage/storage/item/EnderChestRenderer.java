@@ -72,9 +72,9 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
             GL11.glDisable(GL11.GL_LIGHTING);
             CCRenderState.changeTexture(HEDRON_TEXTURE);
-            state.startDrawing(4);
+            state.startDrawingInstance(4);
             CCModelLibrary.icosahedron4.render(pearlMat);
-            state.draw();
+            state.drawInstance();
             GL11.glEnable(GL11.GL_LIGHTING);
         }
     }
@@ -127,8 +127,8 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
     public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float partialTicks) {
         final CCRenderState state = CCRenderState.instance();
-        state.reset();
-        state.setBrightness(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+        state.resetInstance();
+        state.setBrightnessInstance(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
         state.useNormals = true;
 
         TileEnderChest chest = (TileEnderChest) tile;

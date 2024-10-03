@@ -45,8 +45,8 @@ public class ItemEnderStorageRenderer implements IItemRenderer {
                 EnderChestRenderer.renderChest(state, rotation, freq, !owner.equals("global"), x, y, z, 0, 0);
                 break;
             case 1:
-                state.reset();
-                state.pullLightmap();
+                state.resetInstance();
+                state.pullLightmapInstance();
                 state.useNormals = true;
                 EnderTankRenderer.renderTank(state, rotation, 0, freq, !owner.equals("global"), x, y, z, 0, false);
                 EnderTankRenderer.renderLiquid(TankSynchroniser.getClientLiquid(freq, owner), x, y, z);
