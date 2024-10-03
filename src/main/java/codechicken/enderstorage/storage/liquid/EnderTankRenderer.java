@@ -3,6 +3,7 @@ package codechicken.enderstorage.storage.liquid;
 import java.util.ArrayList;
 import java.util.Map;
 
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -101,8 +102,16 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
                 y,
                 z,
                 EnderStorageClientProxy.getTimeOffset(tile.xCoord, tile.yCoord, tile.zCoord),
-                true);
+                shouldRenderFx(tile)); // only render when within 16 blocks
         renderLiquid(tank.liquid_state.c_liquid, x, y, z);
+    }
+
+    private static boolean shouldRenderFx(TileEntity tile) {
+        final TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
+        final double viewX = info.field_147560_j;
+        final double viewY = info.field_147561_k;
+        final double viewZ = info.field_147558_l;
+        return tile.getDistanceFrom(viewX, viewY, viewZ) < 256d;
     }
 
     /**
