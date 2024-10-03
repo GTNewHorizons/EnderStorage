@@ -28,7 +28,8 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
     public static void renderChest(int rotation, int freq, boolean owned, double x, double y, double z, int offset,
             float lidAngle) {
-        if (!EnderStorage.disableFXChest) {
+        final boolean isChestOpen = lidAngle < 0f;
+        if (isChestOpen && !EnderStorage.disableFXChest) {
             TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
             renderEndPortal.render(
                     x,
@@ -57,30 +58,30 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
-        renderButtons(freq, rotation, lidAngle);
+        CCRenderState.changeTexture("enderstorage:textures/buttons.png");
+        drawButton(0, EnderStorageManager.getColourFromFreq(freq, 0), rotation, lidAngle);
+        drawButton(1, EnderStorageManager.getColourFromFreq(freq, 1), rotation, lidAngle);
+        drawButton(2, EnderStorageManager.getColourFromFreq(freq, 2), rotation, lidAngle);
         GL11.glPopMatrix();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 
-        double time = ClientUtils.getRenderTime() + offset;
-        Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
-                new Vector3(x + 0.5, y + 0.2 + lidAngle * -0.5 + EnderStorageClientProxy.getPearlBob(time), z + 0.5),
-                new Rotation(time / 3, Y),
-                0.04);
+        if (isChestOpen) {
+            double time = ClientUtils.getRenderTime() + offset;
+            Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
+                    new Vector3(
+                            x + 0.5,
+                            y + 0.2 + lidAngle * -0.5 + EnderStorageClientProxy.getPearlBob(time),
+                            z + 0.5),
+                    new Rotation(time / 3, Y),
+                    0.04);
 
-        GL11.glDisable(GL11.GL_LIGHTING);
-        CCRenderState.changeTexture("enderstorage:textures/hedronmap.png");
-        CCRenderState.startDrawing(4);
-        CCModelLibrary.icosahedron4.render(pearlMat);
-        CCRenderState.draw();
-        GL11.glEnable(GL11.GL_LIGHTING);
-    }
-
-    private static void renderButtons(int freq, int rot, double lidAngle) {
-        CCRenderState.changeTexture("enderstorage:textures/buttons.png");
-
-        drawButton(0, EnderStorageManager.getColourFromFreq(freq, 0), rot, lidAngle);
-        drawButton(1, EnderStorageManager.getColourFromFreq(freq, 1), rot, lidAngle);
-        drawButton(2, EnderStorageManager.getColourFromFreq(freq, 2), rot, lidAngle);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            CCRenderState.changeTexture("enderstorage:textures/hedronmap.png");
+            CCRenderState.startDrawing(4);
+            CCModelLibrary.icosahedron4.render(pearlMat);
+            CCRenderState.draw();
+            GL11.glEnable(GL11.GL_LIGHTING);
+        }
     }
 
     private static void drawButton(int button, int colour, int rot, double lidAngle) {
