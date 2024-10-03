@@ -48,7 +48,7 @@ public class ItemEnderStorageRenderer implements IItemRenderer {
                 CCRenderState.reset();
                 CCRenderState.pullLightmap();
                 state.useNormals = true;
-                EnderTankRenderer.renderTank(rotation, 0, freq, !owner.equals("global"), x, y, z, 0);
+                EnderTankRenderer.renderTank(rotation, 0, freq, !owner.equals("global"), x, y, z, 0, false);
                 EnderTankRenderer.renderLiquid(TankSynchroniser.getClientLiquid(freq, owner), x, y, z);
                 break;
         }

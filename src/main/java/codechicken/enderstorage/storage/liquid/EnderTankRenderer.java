@@ -101,13 +101,17 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
                 x,
                 y,
                 z,
-                EnderStorageClientProxy.getTimeOffset(tile.xCoord, tile.yCoord, tile.zCoord));
+                EnderStorageClientProxy.getTimeOffset(tile.xCoord, tile.yCoord, tile.zCoord),
+                true);
         renderLiquid(tank.liquid_state.c_liquid, x, y, z);
     }
 
+    /**
+     * @param renderFx set to true to render the portal texture and the floating hedron
+     */
     public static void renderTank(int rotation, float valve, int freq, boolean owned, double x, double y, double z,
-            int offset) {
-        if (!EnderStorage.disableFXTank) {
+            int offset, boolean renderFx) {
+        if (renderFx && !EnderStorage.disableFXTank) {
             TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
             renderEndPortal.render(
                     x,
@@ -148,18 +152,19 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 
-        double time = ClientUtils.getRenderTime() + offset;
-        Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
-                new Vector3(x + 0.5, y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2, z + 0.5),
-                new Rotation(time / 3, Y),
-                0.04);
-
-        GL11.glDisable(GL11.GL_LIGHTING);
-        CCRenderState.changeTexture("enderstorage:textures/hedronmap.png");
-        CCRenderState.startDrawing(4);
-        CCModelLibrary.icosahedron4.render(pearlMat);
-        CCRenderState.draw();
-        GL11.glEnable(GL11.GL_LIGHTING);
+        if (renderFx) {
+            double time = ClientUtils.getRenderTime() + offset;
+            Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
+                    new Vector3(x + 0.5, y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2, z + 0.5),
+                    new Rotation(time / 3, Y),
+                    0.04);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            CCRenderState.changeTexture("enderstorage:textures/hedronmap.png");
+            CCRenderState.startDrawing(4);
+            CCModelLibrary.icosahedron4.render(pearlMat);
+            CCRenderState.draw();
+            GL11.glEnable(GL11.GL_LIGHTING);
+        }
     }
 
     public static void renderLiquid(FluidStack liquid, double x, double y, double z) {
