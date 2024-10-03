@@ -35,6 +35,11 @@ import codechicken.lib.vec.Vector3;
 
 public class EnderTankRenderer extends TileEntitySpecialRenderer {
 
+    private static final ResourceLocation ENDERTANK_TEXTURE = new ResourceLocation(
+            "enderstorage:textures/endertank.png");
+    private static final ResourceLocation BUTTONS_TEXTURE = new ResourceLocation("enderstorage:textures/buttons.png");
+    private static final ResourceLocation HEDRON_TEXTURE = new ResourceLocation("enderstorage:textures/hedronmap.png");
+
     private static final CCModel tankModel;
     private static final CCModel valveModel;
     private static final CCModel[] buttons;
@@ -56,7 +61,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
     static {
         Map<String, CCModel> models = CCModel
                 .parseObjModels(new ResourceLocation("enderstorage", "models/endertank.obj"), new SwapYZ());
-        ArrayList<CCModel> tankParts = new ArrayList<CCModel>();
+        ArrayList<CCModel> tankParts = new ArrayList<>();
         tankParts.add(models.get("Blazerod1"));
         tankParts.add(models.get("Blazerod2"));
         tankParts.add(models.get("Blazerod3"));
@@ -73,8 +78,10 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         valveModel = models.get("Valve").apply(fix).computeNormals();
 
         buttons = new CCModel[3];
-        for (int i = 0; i < 3; i++) buttons[i] = RenderEnderStorage.button.copy()
-                .apply(TileEnderTank.buttonT[i].with(new Translation(-0.5, 0, -0.5)));
+        for (int i = 0; i < 3; i++) {
+            buttons[i] = RenderEnderStorage.button.copy()
+                    .apply(TileEnderTank.buttonT[i].with(new Translation(-0.5, 0, -0.5)));
+        }
 
         for (int colour = 0; colour < 16; colour++) {
             UVTranslationButtons[colour] = new UVTranslation(0.25 * (colour % 4), 0.25 * (colour / 4));
@@ -86,8 +93,8 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         TileEnderTank tank = (TileEnderTank) tile;
 
         final CCRenderState state = CCRenderState.instance();
-        state.reset();
-        state.pullLightmap();
+        state.resetInstance();
+        state.pullLightmapInstance();
         state.useNormals = true;
 
         renderTank(
@@ -100,23 +107,26 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
                 x,
                 y,
                 z,
-                EnderStorageClientProxy.getTimeOffset(tile.xCoord, tile.yCoord, tile.zCoord));
+                EnderStorageClientProxy.getTimeOffset(tile.xCoord, tile.yCoord, tile.zCoord),
+                shouldRenderFx(tile)); // only render when within 16 blocks
         renderLiquid(tank.liquid_state.c_liquid, x, y, z);
     }
 
+    private static boolean shouldRenderFx(TileEntity tile) {
+        final TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
+        final double viewX = info.field_147560_j;
+        final double viewY = info.field_147561_k;
+        final double viewZ = info.field_147558_l;
+        return tile.getDistanceFrom(viewX, viewY, viewZ) < 256d;
+    }
+
+    /**
+     * @param renderFx set to true to render the portal texture and the floating hedron
+     */
     public static void renderTank(CCRenderState state, int rotation, float valve, int freq, boolean owned, double x,
-            double y, double z, int offset) {
-        if (!EnderStorage.disableFXTank) {
-            TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
-            renderEndPortal.render(
-                    x,
-                    y,
-                    z,
-                    0,
-                    info.field_147560_j,
-                    info.field_147560_j,
-                    info.field_147561_k,
-                    info.field_147553_e);
+            double y, double z, int offset, boolean renderFx) {
+        if (renderFx && !EnderStorage.disableFXTank) {
+            renderEndPortal.renderAt(x, y, z);
         }
         GL11.glColor4f(1, 1, 1, 1);
 
@@ -125,40 +135,41 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         GL11.glTranslated(x + 0.5, y, z + 0.5);
         GL11.glRotatef(-90 * (rotation + 2), 0, 1, 0);
 
-        state.changeTexture("enderstorage:textures/endertank.png");
-        state.startDrawing(4);
+        CCRenderState.changeTexture(ENDERTANK_TEXTURE);
+        state.startDrawingInstance(4);
         tankModel.render();
-        state.draw();
+        state.drawInstance();
 
-        state.changeTexture("enderstorage:textures/buttons.png");
-        state.startDrawing(7);
+        CCRenderState.changeTexture(BUTTONS_TEXTURE);
+        state.startDrawingInstance(7);
         for (int i = 0; i < 3; i++) {
             int colour = EnderStorageManager.getColourFromFreq(freq, i);
             buttons[i].render(UVTranslationButtons[colour]);
         }
-        state.draw();
+        state.drawInstance();
 
         new Rotation(valve, Z).at(point).glApply();
 
-        state.changeTexture("enderstorage:textures/endertank.png");
-        state.startDrawing(4);
+        CCRenderState.changeTexture(ENDERTANK_TEXTURE);
+        state.startDrawingInstance(4);
         valveModel.render(owned ? UVTvalveOwned : UVTvalveNotOwned);
-        state.draw();
+        state.drawInstance();
         GL11.glPopMatrix();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 
-        double time = ClientUtils.getRenderTime() + offset;
-        Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
-                new Vector3(x + 0.5, y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2, z + 0.5),
-                new Rotation(time / 3, Y),
-                0.04);
-
-        GL11.glDisable(GL11.GL_LIGHTING);
-        state.changeTexture("enderstorage:textures/hedronmap.png");
-        state.startDrawing(4);
-        CCModelLibrary.icosahedron4.render(pearlMat);
-        state.draw();
-        GL11.glEnable(GL11.GL_LIGHTING);
+        if (renderFx) {
+            double time = ClientUtils.getRenderTime() + offset;
+            Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
+                    new Vector3(x + 0.5, y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2, z + 0.5),
+                    new Rotation(time / 3, Y),
+                    0.04);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            CCRenderState.changeTexture(HEDRON_TEXTURE);
+            state.startDrawingInstance(4);
+            CCModelLibrary.icosahedron4.render(pearlMat);
+            state.drawInstance();
+            GL11.glEnable(GL11.GL_LIGHTING);
+        }
     }
 
     public static void renderLiquid(FluidStack liquid, double x, double y, double z) {

@@ -21,8 +21,8 @@ import codechicken.lib.vec.Vector3;
 
 public class TileEnderChest extends TileFrequencyOwner implements IInventory {
 
-    public double a_lidAngle;
-    public double b_lidAngle;
+    public float lidAngle;
+    public float prevLidAngle;
     public int c_numOpen;
     public int rotation;
 
@@ -44,12 +44,14 @@ public class TileEnderChest extends TileFrequencyOwner implements IInventory {
 
     public TileEnderChest() {}
 
+    @Override
     public void updateEntity() {
         super.updateEntity();
 
-        // update compatiblity
-        if (worldObj.getBlockMetadata(xCoord, yCoord, zCoord) != 0) {
-            rotation = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        // update compatibility
+        final int blockMeta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        if (blockMeta != 0) {
+            rotation = blockMeta;
             worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 0, 3);
         }
 
@@ -58,23 +60,26 @@ public class TileEnderChest extends TileFrequencyOwner implements IInventory {
             worldObj.addBlockEvent(xCoord, yCoord, zCoord, EnderStorage.blockEnderChest, 1, c_numOpen);
         }
 
-        b_lidAngle = a_lidAngle;
-        a_lidAngle = MathHelper.approachLinear(a_lidAngle, c_numOpen > 0 ? 1 : 0, 0.1);
+        prevLidAngle = lidAngle;
+        lidAngle = MathHelper.approachLinear(lidAngle, c_numOpen > 0 ? 1f : 0f, 0.1f);
 
-        if (b_lidAngle >= 0.5 && a_lidAngle < 0.5) worldObj.playSoundEffect(
-                xCoord + 0.5,
-                yCoord + 0.5,
-                zCoord + 0.5,
-                "random.chestclosed",
-                0.5F,
-                worldObj.rand.nextFloat() * 0.1F + 0.9F);
-        else if (b_lidAngle == 0 && a_lidAngle > 0) worldObj.playSoundEffect(
-                xCoord + 0.5,
-                yCoord + 0.5,
-                zCoord + 0.5,
-                "random.chestopen",
-                0.5F,
-                worldObj.rand.nextFloat() * 0.1F + 0.9F);
+        if (prevLidAngle >= 0.5f && lidAngle < 0.5f) {
+            worldObj.playSoundEffect(
+                    xCoord + 0.5,
+                    yCoord + 0.5,
+                    zCoord + 0.5,
+                    "random.chestclosed",
+                    0.5F,
+                    worldObj.rand.nextFloat() * 0.1F + 0.9F);
+        } else if (prevLidAngle == 0f && lidAngle > 0f) {
+            worldObj.playSoundEffect(
+                    xCoord + 0.5,
+                    yCoord + 0.5,
+                    zCoord + 0.5,
+                    "random.chestopen",
+                    0.5F,
+                    worldObj.rand.nextFloat() * 0.1F + 0.9F);
+        }
     }
 
     @Override
@@ -86,11 +91,11 @@ public class TileEnderChest extends TileFrequencyOwner implements IInventory {
         return false;
     }
 
-    public double getRadianLidAngle(float frame) {
-        double a = MathHelper.interpolate(b_lidAngle, a_lidAngle, frame);
+    public float getRadianLidAngle(float partialTicks) {
+        float a = MathHelper.interpolate(prevLidAngle, lidAngle, partialTicks);
         a = 1.0F - a;
         a = 1.0F - a * a * a;
-        return a * 3.141593 * -0.5;
+        return a * 3.141593f * -0.5f;
     }
 
     public void reloadStorage() {

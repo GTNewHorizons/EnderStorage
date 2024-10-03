@@ -118,7 +118,7 @@ public class TankSynchroniser {
     public static class PlayerItemTankCache {
 
         private boolean client;
-        private HashMap<String, PlayerItemTankState> tankStates = new HashMap<String, PlayerItemTankState>();
+        private HashMap<String, PlayerItemTankState> tankStates = new HashMap<>();
         // client
         private HashSet<String> b_visible;
         private HashSet<String> a_visible;
@@ -132,8 +132,8 @@ public class TankSynchroniser {
 
         public PlayerItemTankCache() {
             client = true;
-            a_visible = new HashSet<String>();
-            b_visible = new HashSet<String>();
+            a_visible = new HashSet<>();
+            b_visible = new HashSet<>();
         }
 
         public void track(int freq, String owner, boolean t) {
@@ -266,6 +266,6 @@ public class TankSynchroniser {
     @SubscribeEvent
     public void onWorldLoad(Load event) {
         if (event.world.isRemote) clientState = new PlayerItemTankCache();
-        else if (playerItemTankStates == null) playerItemTankStates = new HashMap<String, PlayerItemTankCache>();
+        else if (playerItemTankStates == null) playerItemTankStates = new HashMap<>();
     }
 }
