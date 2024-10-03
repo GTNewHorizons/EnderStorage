@@ -3,6 +3,7 @@ package codechicken.enderstorage.storage.item;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
@@ -11,9 +12,14 @@ import codechicken.lib.render.CCRenderState;
 
 public class GuiEnderItemStorage extends GuiContainer {
 
-    private String name;
-    private IInventory playerInv;
-    private EnderItemStorage chestInv;
+    private static final ResourceLocation DISPENSER_TEXTURE = new ResourceLocation(
+            "textures/gui/container/dispenser.png");
+    private static final ResourceLocation GENERIC_54_TEXTURE = new ResourceLocation(
+            "textures/gui/container/generic_54.png");
+
+    private final String name;
+    private final IInventory playerInv;
+    private final EnderItemStorage chestInv;
 
     public GuiEnderItemStorage(InventoryPlayer invplayer, EnderItemStorage chestInv, String name) {
         super(new ContainerEnderItemStorage(invplayer, chestInv, true));
@@ -37,9 +43,7 @@ public class GuiEnderItemStorage extends GuiContainer {
 
     protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
         GL11.glColor4f(1, 1, 1, 1);
-        CCRenderState.changeTexture(
-                chestInv.getSize() == 0 ? "textures/gui/container/dispenser.png"
-                        : "textures/gui/container/generic_54.png");
+        CCRenderState.changeTexture(chestInv.getSize() == 0 ? DISPENSER_TEXTURE : GENERIC_54_TEXTURE);
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
 

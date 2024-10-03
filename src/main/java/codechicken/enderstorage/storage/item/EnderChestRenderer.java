@@ -3,6 +3,7 @@ package codechicken.enderstorage.storage.item;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -20,6 +21,10 @@ import codechicken.lib.vec.Vector3;
 
 public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
+    private static final ResourceLocation ENDERCHEST_TEXTURE = new ResourceLocation(
+            "enderstorage:textures/enderchest.png");
+    private static final ResourceLocation BUTTONS_TEXTURE = new ResourceLocation("enderstorage:textures/buttons.png");
+    private static final ResourceLocation HEDRON_TEXTURE = new ResourceLocation("enderstorage:textures/hedronmap.png");
     private static final ModelEnderChest model = new ModelEnderChest();
     private static final Vector3 Y = new Vector3(0, 1, 0);
 
@@ -33,7 +38,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         }
         GL11.glColor4f(1, 1, 1, 1);
 
-        state.changeTexture("enderstorage:textures/enderchest.png");
+        CCRenderState.changeTexture(ENDERCHEST_TEXTURE);
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glPushMatrix();
         GL11.glColor4f(1, 1, 1, 1);
@@ -48,7 +53,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
-        state.changeTexture("enderstorage:textures/buttons.png");
+        CCRenderState.changeTexture(BUTTONS_TEXTURE);
         drawButton(0, EnderStorageManager.getColourFromFreq(freq, 0), rotation, lidAngle);
         drawButton(1, EnderStorageManager.getColourFromFreq(freq, 1), rotation, lidAngle);
         drawButton(2, EnderStorageManager.getColourFromFreq(freq, 2), rotation, lidAngle);
@@ -66,7 +71,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
                     0.04);
 
             GL11.glDisable(GL11.GL_LIGHTING);
-            state.changeTexture("enderstorage:textures/hedronmap.png");
+            CCRenderState.changeTexture(HEDRON_TEXTURE);
             state.startDrawing(4);
             CCModelLibrary.icosahedron4.render(pearlMat);
             state.draw();

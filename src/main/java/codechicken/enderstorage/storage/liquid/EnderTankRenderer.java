@@ -35,6 +35,11 @@ import codechicken.lib.vec.Vector3;
 
 public class EnderTankRenderer extends TileEntitySpecialRenderer {
 
+    private static final ResourceLocation ENDERTANK_TEXTURE = new ResourceLocation(
+            "enderstorage:textures/endertank.png");
+    private static final ResourceLocation BUTTONS_TEXTURE = new ResourceLocation("enderstorage:textures/buttons.png");
+    private static final ResourceLocation HEDRON_TEXTURE = new ResourceLocation("enderstorage:textures/hedronmap.png");
+
     private static final CCModel tankModel;
     private static final CCModel valveModel;
     private static final CCModel[] buttons;
@@ -130,12 +135,12 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         GL11.glTranslated(x + 0.5, y, z + 0.5);
         GL11.glRotatef(-90 * (rotation + 2), 0, 1, 0);
 
-        state.changeTexture("enderstorage:textures/endertank.png");
+        CCRenderState.changeTexture(ENDERTANK_TEXTURE);
         state.startDrawing(4);
         tankModel.render();
         state.draw();
 
-        state.changeTexture("enderstorage:textures/buttons.png");
+        CCRenderState.changeTexture(BUTTONS_TEXTURE);
         state.startDrawing(7);
         for (int i = 0; i < 3; i++) {
             int colour = EnderStorageManager.getColourFromFreq(freq, i);
@@ -145,7 +150,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
 
         new Rotation(valve, Z).at(point).glApply();
 
-        state.changeTexture("enderstorage:textures/endertank.png");
+        CCRenderState.changeTexture(ENDERTANK_TEXTURE);
         state.startDrawing(4);
         valveModel.render(owned ? UVTvalveOwned : UVTvalveNotOwned);
         state.draw();
@@ -159,7 +164,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
                     new Rotation(time / 3, Y),
                     0.04);
             GL11.glDisable(GL11.GL_LIGHTING);
-            state.changeTexture("enderstorage:textures/hedronmap.png");
+            CCRenderState.changeTexture(HEDRON_TEXTURE);
             state.startDrawing(4);
             CCModelLibrary.icosahedron4.render(pearlMat);
             state.draw();
