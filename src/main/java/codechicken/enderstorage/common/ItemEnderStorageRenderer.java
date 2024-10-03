@@ -42,13 +42,13 @@ public class ItemEnderStorageRenderer implements IItemRenderer {
         final CCRenderState state = CCRenderState.instance();
         switch (item.getItemDamage() >> 12) {
             case 0:
-                EnderChestRenderer.renderChest(state, rotation, freq, !owner.equals("global"), x, y, z, 0, 0);
+                EnderChestRenderer.renderChest(rotation, freq, !owner.equals("global"), x, y, z, 0, 0);
                 break;
             case 1:
                 CCRenderState.reset();
                 CCRenderState.pullLightmap();
                 state.useNormals = true;
-                EnderTankRenderer.renderTank(state, rotation, 0, freq, !owner.equals("global"), x, y, z, 0);
+                EnderTankRenderer.renderTank(rotation, 0, freq, !owner.equals("global"), x, y, z, 0);
                 EnderTankRenderer.renderLiquid(TankSynchroniser.getClientLiquid(freq, owner), x, y, z);
                 break;
         }

@@ -93,7 +93,6 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         state.useNormals = true;
 
         renderTank(
-                state,
                 tank.rotation,
                 (float) MathHelper.interpolate(tank.pressure_state.b_rotate, tank.pressure_state.a_rotate, f)
                         * 0.01745F,
@@ -106,8 +105,8 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         renderLiquid(tank.liquid_state.c_liquid, x, y, z);
     }
 
-    public static void renderTank(CCRenderState state, int rotation, float valve, int freq, boolean owned, double x,
-            double y, double z, int offset) {
+    public static void renderTank(int rotation, float valve, int freq, boolean owned, double x, double y, double z,
+            int offset) {
         if (!EnderStorage.disableFXTank) {
             TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
             renderEndPortal.render(

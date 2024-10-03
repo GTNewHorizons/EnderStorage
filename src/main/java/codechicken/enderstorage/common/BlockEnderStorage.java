@@ -1,7 +1,6 @@
 package codechicken.enderstorage.common;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.BlockContainer;
@@ -182,7 +181,7 @@ public class BlockEnderStorage extends BlockContainer {
         TileFrequencyOwner tile = (TileFrequencyOwner) world.getTileEntity(x, y, z);
         if (tile == null) return null;
 
-        List<IndexedCuboid6> cuboids = new LinkedList<>();
+        List<IndexedCuboid6> cuboids = new ArrayList<>();
         tile.addTraceableCuboids(cuboids);
         return rayTracer.rayTraceCuboids(new Vector3(start), new Vector3(end), cuboids, new BlockCoord(x, y, z), this);
     }

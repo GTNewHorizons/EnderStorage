@@ -26,8 +26,8 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
     public EnderChestRenderer() {}
 
-    public static void renderChest(CCRenderState state, int rotation, int freq, boolean owned, double x, double y,
-            double z, int offset, float lidAngle) {
+    public static void renderChest(int rotation, int freq, boolean owned, double x, double y, double z, int offset,
+            float lidAngle) {
         if (!EnderStorage.disableFXChest) {
             TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
             renderEndPortal.render(
@@ -137,7 +137,6 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
         TileEnderChest chest = (TileEnderChest) tile;
         renderChest(
-                state,
                 chest.rotation,
                 chest.freq,
                 !chest.owner.equals("global"),
@@ -145,7 +144,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
                 y,
                 z,
                 EnderStorageClientProxy.getTimeOffset(chest.xCoord, chest.yCoord, chest.zCoord),
-                (float) chest.getRadianLidAngle(partialTicks));
+                chest.getRadianLidAngle(partialTicks));
     }
 
     public static final double phi = 1.618034;
