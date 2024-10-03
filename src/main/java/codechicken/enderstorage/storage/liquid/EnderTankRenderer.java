@@ -3,7 +3,6 @@ package codechicken.enderstorage.storage.liquid;
 import java.util.ArrayList;
 import java.util.Map;
 
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -112,16 +111,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
     public static void renderTank(int rotation, float valve, int freq, boolean owned, double x, double y, double z,
             int offset, boolean renderFx) {
         if (renderFx && !EnderStorage.disableFXTank) {
-            TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
-            renderEndPortal.render(
-                    x,
-                    y,
-                    z,
-                    0,
-                    info.field_147560_j,
-                    info.field_147560_j,
-                    info.field_147561_k,
-                    info.field_147553_e);
+            renderEndPortal.renderAt(x, y, z);
         }
         GL11.glColor4f(1, 1, 1, 1);
 

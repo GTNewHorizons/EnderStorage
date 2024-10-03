@@ -1,7 +1,6 @@
 package codechicken.enderstorage.storage.item;
 
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
@@ -30,16 +29,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
             float lidAngle) {
         final boolean isChestOpen = lidAngle < 0f;
         if (isChestOpen && !EnderStorage.disableFXChest) {
-            TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
-            renderEndPortal.render(
-                    x,
-                    y,
-                    z,
-                    0,
-                    info.field_147560_j,
-                    info.field_147560_j,
-                    info.field_147561_k,
-                    info.field_147553_e);
+            renderEndPortal.renderAt(x, y, z);
         }
         GL11.glColor4f(1, 1, 1, 1);
 

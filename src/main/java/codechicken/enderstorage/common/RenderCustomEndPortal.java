@@ -7,6 +7,8 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.tileentity.TileEntityEndPortal;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.ARBVertexBlend;
@@ -16,12 +18,13 @@ public class RenderCustomEndPortal {
 
     private static final ResourceLocation end_skyTex = new ResourceLocation("textures/environment/end_sky.png");
     private static final ResourceLocation end_portalTex = new ResourceLocation("textures/entity/end_portal.png");
+    private static final Random random = new Random(31100L);
 
-    private double surfaceY;
-    private double surfaceX1;
-    private double surfaceX2;
-    private double surfaceZ1;
-    private double surfaceZ2;
+    private final double surfaceY;
+    private final double surfaceX1;
+    private final double surfaceX2;
+    private final double surfaceZ1;
+    private final double surfaceZ2;
 
     FloatBuffer field_40448_a;
 
@@ -34,11 +37,19 @@ public class RenderCustomEndPortal {
         field_40448_a = GLAllocation.createDirectFloatBuffer(16);
     }
 
-    public void render(double posX, double posY, double posZ, float frame, double playerX, double playerY,
-            double playerZ, TextureManager r) {
+    /**
+     * See
+     * {@link net.minecraft.client.renderer.tileentity.RenderEndPortal#renderTileEntityAt(TileEntityEndPortal, double, double, double, float)}
+     */
+    public void renderAt(double posX, double posY, double posZ) {
+        final TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
+        final TextureManager r = info.field_147553_e;
         if (r == null) return;
+        final double viewX = info.field_147560_j;
+        final double viewY = info.field_147561_k;
+        final double viewZ = info.field_147558_l;
         GL11.glDisable(GL11.GL_LIGHTING);
-        Random random = new Random(31100L);
+        random.setSeed(31100L);
         for (int i = 0; i < 16; i++) {
             GL11.glPushMatrix();
             float f5 = 16 - i;
@@ -63,7 +74,7 @@ public class RenderCustomEndPortal {
             float f10 = f8 + f5 + ActiveRenderInfo.objectY;
             float f11 = f9 / f10;
             f11 = (float) (posY + surfaceY) + f11;
-            GL11.glTranslated(playerX, f11, playerZ);
+            GL11.glTranslated(viewX, f11, viewZ);
             GL11.glTexGeni(GL11.GL_S, GL11.GL_TEXTURE_GEN_MODE, GL11.GL_OBJECT_LINEAR);
             GL11.glTexGeni(GL11.GL_T, GL11.GL_TEXTURE_GEN_MODE, GL11.GL_OBJECT_LINEAR);
             GL11.glTexGeni(GL11.GL_R, GL11.GL_TEXTURE_GEN_MODE, GL11.GL_OBJECT_LINEAR);
@@ -85,12 +96,9 @@ public class RenderCustomEndPortal {
             GL11.glTranslatef(0.5F, 0.5F, 0.0F);
             GL11.glRotatef((i * i * 4321 + i * 9) * 2.0F, 0.0F, 0.0F, 1.0F);
             GL11.glTranslatef(-0.5F, -0.5F, 0.0F);
-            GL11.glTranslated(-playerX, -playerZ, -playerY);
+            GL11.glTranslated(-viewX, -viewZ, -viewY);
             f9 = f8 + ActiveRenderInfo.objectY;
-            GL11.glTranslated(
-                    (ActiveRenderInfo.objectX * f5) / f9,
-                    (ActiveRenderInfo.objectZ * f5) / f9,
-                    -playerY + 20);
+            GL11.glTranslated((ActiveRenderInfo.objectX * f5) / f9, (ActiveRenderInfo.objectZ * f5) / f9, -viewY + 20);
             Tessellator tessellator = Tessellator.instance;
             tessellator.startDrawingQuads();
             f11 = random.nextFloat() * 0.5F + 0.1F;
