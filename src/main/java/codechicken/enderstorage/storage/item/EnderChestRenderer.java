@@ -25,15 +25,15 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
     public EnderChestRenderer() {}
 
-    public static void renderChest(int rotation, int freq, boolean owned, double x, double y, double z, int offset,
-            float lidAngle) {
+    public static void renderChest(CCRenderState state, int rotation, int freq, boolean owned, double x, double y,
+            double z, int offset, float lidAngle) {
         final boolean isChestOpen = lidAngle < 0f;
         if (isChestOpen && !EnderStorage.disableFXChest) {
             renderEndPortal.renderAt(x, y, z);
         }
         GL11.glColor4f(1, 1, 1, 1);
 
-        CCRenderState.changeTexture("enderstorage:textures/enderchest.png");
+        state.changeTexture("enderstorage:textures/enderchest.png");
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glPushMatrix();
         GL11.glColor4f(1, 1, 1, 1);
@@ -48,7 +48,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
-        CCRenderState.changeTexture("enderstorage:textures/buttons.png");
+        state.changeTexture("enderstorage:textures/buttons.png");
         drawButton(0, EnderStorageManager.getColourFromFreq(freq, 0), rotation, lidAngle);
         drawButton(1, EnderStorageManager.getColourFromFreq(freq, 1), rotation, lidAngle);
         drawButton(2, EnderStorageManager.getColourFromFreq(freq, 2), rotation, lidAngle);
@@ -66,10 +66,10 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
                     0.04);
 
             GL11.glDisable(GL11.GL_LIGHTING);
-            CCRenderState.changeTexture("enderstorage:textures/hedronmap.png");
-            CCRenderState.startDrawing(4);
+            state.changeTexture("enderstorage:textures/hedronmap.png");
+            state.startDrawing(4);
             CCModelLibrary.icosahedron4.render(pearlMat);
-            CCRenderState.draw();
+            state.draw();
             GL11.glEnable(GL11.GL_LIGHTING);
         }
     }
@@ -122,12 +122,13 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
     public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float partialTicks) {
         final CCRenderState state = CCRenderState.instance();
-        CCRenderState.reset();
-        CCRenderState.setBrightness(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+        state.reset();
+        state.setBrightness(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
         state.useNormals = true;
 
         TileEnderChest chest = (TileEnderChest) tile;
         renderChest(
+                state,
                 chest.rotation,
                 chest.freq,
                 !chest.owner.equals("global"),
