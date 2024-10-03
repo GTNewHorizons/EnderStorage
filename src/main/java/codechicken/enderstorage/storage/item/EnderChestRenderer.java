@@ -42,7 +42,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         }
         GL11.glColor4f(1, 1, 1, 1);
 
-        state.changeTexture("enderstorage:textures/enderchest.png");
+        CCRenderState.changeTexture("enderstorage:textures/enderchest.png");
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glPushMatrix();
         GL11.glColor4f(1, 1, 1, 1);
@@ -68,10 +68,10 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
                 0.04);
 
         GL11.glDisable(GL11.GL_LIGHTING);
-        state.changeTexture("enderstorage:textures/hedronmap.png");
-        state.startDrawing(4);
+        CCRenderState.changeTexture("enderstorage:textures/hedronmap.png");
+        CCRenderState.startDrawing(4);
         CCModelLibrary.icosahedron4.render(pearlMat);
-        state.draw();
+        CCRenderState.draw();
         GL11.glEnable(GL11.GL_LIGHTING);
     }
 
@@ -129,10 +129,10 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         Tessellator.instance.addVertexWithUV(vec.x, vec.y, vec.z, u, v);
     }
 
-    public void renderTileEntityAt(TileEntity tile, double d, double d1, double d2, float f) {
+    public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float partialTicks) {
         final CCRenderState state = CCRenderState.instance();
-        state.reset();
-        state.setBrightness(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+        CCRenderState.reset();
+        CCRenderState.setBrightness(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
         state.useNormals = true;
 
         TileEnderChest chest = (TileEnderChest) tile;
@@ -141,11 +141,11 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
                 chest.rotation,
                 chest.freq,
                 !chest.owner.equals("global"),
-                d,
-                d1,
-                d2,
+                x,
+                y,
+                z,
                 EnderStorageClientProxy.getTimeOffset(chest.xCoord, chest.yCoord, chest.zCoord),
-                (float) chest.getRadianLidAngle(f));
+                (float) chest.getRadianLidAngle(partialTicks));
     }
 
     public static final double phi = 1.618034;

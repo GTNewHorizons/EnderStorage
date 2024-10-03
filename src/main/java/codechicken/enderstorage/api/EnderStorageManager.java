@@ -51,7 +51,7 @@ public class EnderStorageManager {
     private static EnderStorageManager serverManager;
     private static EnderStorageManager clientManager;
     private static ConfigFile config;
-    private static HashMap<String, EnderStoragePlugin> plugins = new HashMap<String, EnderStoragePlugin>();
+    private static HashMap<String, EnderStoragePlugin> plugins = new HashMap<>();
 
     private Map<String, AbstractEnderStorage> storageMap;
     private Map<String, List<AbstractEnderStorage>> storageList;
@@ -66,11 +66,11 @@ public class EnderStorageManager {
     public EnderStorageManager(boolean client) {
         this.client = client;
 
-        storageMap = Collections.synchronizedMap(new HashMap<String, AbstractEnderStorage>());
-        storageList = Collections.synchronizedMap(new HashMap<String, List<AbstractEnderStorage>>());
-        dirtyStorage = Collections.synchronizedList(new LinkedList<AbstractEnderStorage>());
+        storageMap = Collections.synchronizedMap(new HashMap<>());
+        storageList = Collections.synchronizedMap(new HashMap<>());
+        dirtyStorage = Collections.synchronizedList(new LinkedList<>());
 
-        for (String key : plugins.keySet()) storageList.put(key, new ArrayList<AbstractEnderStorage>());
+        for (String key : plugins.keySet()) storageList.put(key, new ArrayList<>());
 
         if (!client) load();
     }
@@ -195,10 +195,8 @@ public class EnderStorageManager {
         plugins.put(plugin.identifer(), plugin);
         if (config != null) plugin.loadConfig(config.getTag(plugin.identifer()));
 
-        if (serverManager != null)
-            serverManager.storageList.put(plugin.identifer(), new ArrayList<AbstractEnderStorage>());
-        if (clientManager != null)
-            clientManager.storageList.put(plugin.identifer(), new ArrayList<AbstractEnderStorage>());
+        if (serverManager != null) serverManager.storageList.put(plugin.identifer(), new ArrayList<>());
+        if (clientManager != null) clientManager.storageList.put(plugin.identifer(), new ArrayList<>());
     }
 
     public void requestSave(AbstractEnderStorage storage) {

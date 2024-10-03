@@ -56,7 +56,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
     static {
         Map<String, CCModel> models = CCModel
                 .parseObjModels(new ResourceLocation("enderstorage", "models/endertank.obj"), new SwapYZ());
-        ArrayList<CCModel> tankParts = new ArrayList<CCModel>();
+        ArrayList<CCModel> tankParts = new ArrayList<>();
         tankParts.add(models.get("Blazerod1"));
         tankParts.add(models.get("Blazerod2"));
         tankParts.add(models.get("Blazerod3"));
@@ -73,8 +73,10 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         valveModel = models.get("Valve").apply(fix).computeNormals();
 
         buttons = new CCModel[3];
-        for (int i = 0; i < 3; i++) buttons[i] = RenderEnderStorage.button.copy()
-                .apply(TileEnderTank.buttonT[i].with(new Translation(-0.5, 0, -0.5)));
+        for (int i = 0; i < 3; i++) {
+            buttons[i] = RenderEnderStorage.button.copy()
+                    .apply(TileEnderTank.buttonT[i].with(new Translation(-0.5, 0, -0.5)));
+        }
 
         for (int colour = 0; colour < 16; colour++) {
             UVTranslationButtons[colour] = new UVTranslation(0.25 * (colour % 4), 0.25 * (colour / 4));
@@ -86,8 +88,8 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         TileEnderTank tank = (TileEnderTank) tile;
 
         final CCRenderState state = CCRenderState.instance();
-        state.reset();
-        state.pullLightmap();
+        CCRenderState.reset();
+        CCRenderState.pullLightmap();
         state.useNormals = true;
 
         renderTank(
@@ -125,25 +127,25 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         GL11.glTranslated(x + 0.5, y, z + 0.5);
         GL11.glRotatef(-90 * (rotation + 2), 0, 1, 0);
 
-        state.changeTexture("enderstorage:textures/endertank.png");
-        state.startDrawing(4);
+        CCRenderState.changeTexture("enderstorage:textures/endertank.png");
+        CCRenderState.startDrawing(4);
         tankModel.render();
-        state.draw();
+        CCRenderState.draw();
 
-        state.changeTexture("enderstorage:textures/buttons.png");
-        state.startDrawing(7);
+        CCRenderState.changeTexture("enderstorage:textures/buttons.png");
+        CCRenderState.startDrawing(7);
         for (int i = 0; i < 3; i++) {
             int colour = EnderStorageManager.getColourFromFreq(freq, i);
             buttons[i].render(UVTranslationButtons[colour]);
         }
-        state.draw();
+        CCRenderState.draw();
 
         new Rotation(valve, Z).at(point).glApply();
 
-        state.changeTexture("enderstorage:textures/endertank.png");
-        state.startDrawing(4);
+        CCRenderState.changeTexture("enderstorage:textures/endertank.png");
+        CCRenderState.startDrawing(4);
         valveModel.render(owned ? UVTvalveOwned : UVTvalveNotOwned);
-        state.draw();
+        CCRenderState.draw();
         GL11.glPopMatrix();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 
@@ -154,10 +156,10 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
                 0.04);
 
         GL11.glDisable(GL11.GL_LIGHTING);
-        state.changeTexture("enderstorage:textures/hedronmap.png");
-        state.startDrawing(4);
+        CCRenderState.changeTexture("enderstorage:textures/hedronmap.png");
+        CCRenderState.startDrawing(4);
         CCModelLibrary.icosahedron4.render(pearlMat);
-        state.draw();
+        CCRenderState.draw();
         GL11.glEnable(GL11.GL_LIGHTING);
     }
 
