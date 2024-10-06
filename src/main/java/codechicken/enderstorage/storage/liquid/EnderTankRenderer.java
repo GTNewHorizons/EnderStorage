@@ -160,7 +160,9 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         if (renderFx) {
             double time = ClientUtils.getRenderTime() + offset;
             Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
-                    new Vector3(x + 0.5, y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2, z + 0.5),
+                    x + 0.5,
+                    y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2,
+                    z + 0.5,
                     new Rotation(time / 3, Y),
                     0.04);
             GL11.glDisable(GL11.GL_LIGHTING);

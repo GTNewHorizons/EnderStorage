@@ -63,10 +63,9 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         if (isChestOpen) {
             double time = ClientUtils.getRenderTime() + offset;
             Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
-                    new Vector3(
-                            x + 0.5,
-                            y + 0.2 + lidAngle * -0.5 + EnderStorageClientProxy.getPearlBob(time),
-                            z + 0.5),
+                    x + 0.5,
+                    y + 0.2 + lidAngle * -0.5 + EnderStorageClientProxy.getPearlBob(time),
+                    z + 0.5,
                     new Rotation(time / 3, Y),
                     0.04);
 
