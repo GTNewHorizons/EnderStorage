@@ -10,7 +10,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import codechicken.core.ClientUtils;
 import codechicken.core.fluid.FluidUtils;
