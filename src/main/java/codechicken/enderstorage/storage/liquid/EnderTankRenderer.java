@@ -10,7 +10,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import codechicken.core.ClientUtils;
 import codechicken.core.fluid.FluidUtils;
@@ -130,7 +129,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         }
         GL11.glColor4f(1, 1, 1, 1);
 
-        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        GL11.glEnable(GL11.GL_NORMALIZE);
         GL11.glPushMatrix();
         GL11.glTranslated(x + 0.5, y, z + 0.5);
         GL11.glRotatef(-90 * (rotation + 2), 0, 1, 0);
@@ -155,7 +154,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         valveModel.render(owned ? UVTvalveOwned : UVTvalveNotOwned);
         state.drawInstance();
         GL11.glPopMatrix();
-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        GL11.glDisable(GL11.GL_NORMALIZE);
 
         if (renderFx) {
             double time = ClientUtils.getRenderTime() + offset;
