@@ -39,7 +39,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         GL11.glColor4f(1, 1, 1, 1);
 
         CCRenderState.changeTexture(ENDERCHEST_TEXTURE);
-        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        GL11.glEnable(GL11.GL_NORMALIZE);
         GL11.glPushMatrix();
         GL11.glColor4f(1, 1, 1, 1);
         GL11.glTranslated(x, y + 1.0, z + 1.0F);
@@ -58,7 +58,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         drawButton(1, EnderStorageManager.getColourFromFreq(freq, 1), rotation, lidAngle);
         drawButton(2, EnderStorageManager.getColourFromFreq(freq, 2), rotation, lidAngle);
         GL11.glPopMatrix();
-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        GL11.glDisable(GL11.GL_NORMALIZE);
 
         if (isChestOpen) {
             double time = ClientUtils.getRenderTime() + offset;
