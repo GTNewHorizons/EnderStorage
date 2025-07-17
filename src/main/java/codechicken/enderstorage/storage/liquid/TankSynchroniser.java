@@ -5,8 +5,7 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.event.world.WorldEvent.Load;
-import net.minecraftforge.event.world.WorldEvent.Unload;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.google.common.collect.Sets;
@@ -237,8 +236,10 @@ public class TankSynchroniser {
 
     @SubscribeEvent
     public void onPlayerLogout(PlayerLoggedOutEvent event) {
-        if (playerItemTankStates != null) // sometimes world unloads before players logout
+        if (playerItemTankStates != null) {
+            // sometimes world unloads before players logout
             playerItemTankStates.remove(event.player.getCommandSenderName());
+        }
     }
 
     @SubscribeEvent
@@ -249,22 +250,29 @@ public class TankSynchroniser {
 
     @SubscribeEvent
     public void tickEnd(ServerTickEvent event) {
-        if (event.phase == Phase.END && playerItemTankStates != null)
-            for (Entry<String, PlayerItemTankCache> entry : playerItemTankStates.entrySet()) entry.getValue().update();
+        if (event.phase == Phase.END && playerItemTankStates != null) {
+            for (Entry<String, PlayerItemTankCache> entry : playerItemTankStates.entrySet()) {
+                entry.getValue().update();
+            }
+        }
     }
 
     @SubscribeEvent
     public void tickEnd(ClientTickEvent event) {
-        if (event.phase == Phase.END) if (ClientUtils.inWorld()) clientState.update();
+        if (event.phase == Phase.END && ClientUtils.inWorld()) {
+            clientState.update();
+        }
     }
 
     @SubscribeEvent
-    public void onWorldUnload(Unload event) {
-        if (!event.world.isRemote && !ServerUtils.mc().isServerRunning()) playerItemTankStates = null;
+    public void onWorldUnload(WorldEvent.Unload event) {
+        if (!event.world.isRemote && !ServerUtils.mc().isServerRunning()) {
+            playerItemTankStates = null;
+        }
     }
 
     @SubscribeEvent
-    public void onWorldLoad(Load event) {
+    public void onWorldLoad(WorldEvent.Load event) {
         if (event.world.isRemote) clientState = new PlayerItemTankCache();
         else if (playerItemTankStates == null) playerItemTankStates = new HashMap<>();
     }
