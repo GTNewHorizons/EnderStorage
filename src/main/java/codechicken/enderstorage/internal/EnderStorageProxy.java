@@ -36,10 +36,12 @@ public class EnderStorageProxy {
 
     public void preInit() {
         MinecraftForge.EVENT_BUS.register(new EnderStorageRecipe());
-        FMLCommonHandler.instance().bus().register(new EnderStorageSaveHandler());
-        MinecraftForge.EVENT_BUS.register(new EnderStorageSaveHandler());
-        FMLCommonHandler.instance().bus().register(new TankSynchroniser());
-        MinecraftForge.EVENT_BUS.register(new TankSynchroniser());
+        final EnderStorageSaveHandler saveHandler = new EnderStorageSaveHandler();
+        FMLCommonHandler.instance().bus().register(saveHandler);
+        MinecraftForge.EVENT_BUS.register(saveHandler);
+        final TankSynchroniser tankSynchroniser = new TankSynchroniser();
+        FMLCommonHandler.instance().bus().register(tankSynchroniser);
+        MinecraftForge.EVENT_BUS.register(tankSynchroniser);
 
         if (disableVanillaEnderChest) EnderStorageRecipe.removeVanillaChest();
 

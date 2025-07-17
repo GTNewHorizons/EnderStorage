@@ -16,8 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.event.world.WorldEvent.Load;
-import net.minecraftforge.event.world.WorldEvent.Save;
+import net.minecraftforge.event.world.WorldEvent;
 
 import codechicken.lib.config.ConfigFile;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -28,13 +27,17 @@ public class EnderStorageManager {
     public static class EnderStorageSaveHandler {
 
         @SubscribeEvent
-        public void onWorldLoad(Load event) {
-            if (event.world.isRemote) reloadManager(true);
+        public void onWorldLoad(WorldEvent.Load event) {
+            if (event.world.isRemote) {
+                reloadManager(true);
+            }
         }
 
         @SubscribeEvent
-        public void onWorldSave(Save event) {
-            if (!event.world.isRemote && instance(false) != null) instance(false).save(false);
+        public void onWorldSave(WorldEvent.Save event) {
+            if (!event.world.isRemote && instance(false) != null) {
+                instance(false).save(false);
+            }
         }
 
         @SubscribeEvent
@@ -51,16 +54,16 @@ public class EnderStorageManager {
     private static EnderStorageManager serverManager;
     private static EnderStorageManager clientManager;
     private static ConfigFile config;
-    private static HashMap<String, EnderStoragePlugin> plugins = new HashMap<>();
+    private static final HashMap<String, EnderStoragePlugin> plugins = new HashMap<>();
 
-    private Map<String, AbstractEnderStorage> storageMap;
-    private Map<String, List<AbstractEnderStorage>> storageList;
+    private final Map<String, AbstractEnderStorage> storageMap;
+    private final Map<String, List<AbstractEnderStorage>> storageList;
     public final boolean client;
 
     private File saveDir;
     private File[] saveFiles;
     private int saveTo;
-    private List<AbstractEnderStorage> dirtyStorage;
+    private final List<AbstractEnderStorage> dirtyStorage;
     private NBTTagCompound saveTag;
 
     public EnderStorageManager(boolean client) {
