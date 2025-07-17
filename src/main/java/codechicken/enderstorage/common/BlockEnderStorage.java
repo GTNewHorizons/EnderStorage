@@ -41,6 +41,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockEnderStorage extends BlockContainer {
 
     private RayTracer rayTracer = new RayTracer();
+    public EventHandler handler = new EventHandler();
 
     public BlockEnderStorage() {
         super(Material.rock);
@@ -48,6 +49,7 @@ public class BlockEnderStorage extends BlockContainer {
         setResistance(100F);
         setStepSound(soundTypeStone);
         setCreativeTab(CreativeTabs.tabDecorations);
+        handler = new EventHandler();
     }
 
     @Override
@@ -205,20 +207,6 @@ public class BlockEnderStorage extends BlockContainer {
         return super.getCollisionBoundingBoxFromPool(world, x, y, z);
     }
 
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public void onBlockHighlight(DrawBlockHighlightEvent event) {
-        if (event.target.typeOfHit == MovingObjectType.BLOCK
-                && event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ)
-                        == this)
-            RayTracer.retraceBlock(
-                    event.player.worldObj,
-                    event.player,
-                    event.target.blockX,
-                    event.target.blockY,
-                    event.target.blockZ);
-    }
-
     @Override
     public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int side) {
         TileFrequencyOwner tile = (TileFrequencyOwner) world.getTileEntity(x, y, z);
@@ -249,5 +237,22 @@ public class BlockEnderStorage extends BlockContainer {
     public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
         TileFrequencyOwner tile = (TileFrequencyOwner) world.getTileEntity(x, y, z);
         return tile.rotate();
+    }
+
+    public class EventHandler {
+
+        @SideOnly(Side.CLIENT)
+        @SubscribeEvent
+        public void onBlockHighlight(DrawBlockHighlightEvent event) {
+            if (event.target.typeOfHit == MovingObjectType.BLOCK
+                    && event.player.worldObj.getBlock(event.target.blockX, event.target.blockY, event.target.blockZ)
+                            == BlockEnderStorage.this)
+                RayTracer.retraceBlock(
+                        event.player.worldObj,
+                        event.player,
+                        event.target.blockX,
+                        event.target.blockY,
+                        event.target.blockZ);
+        }
     }
 }

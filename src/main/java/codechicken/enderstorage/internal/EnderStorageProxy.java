@@ -22,7 +22,7 @@ public class EnderStorageProxy {
         blockEnderChest = new BlockEnderStorage();
         blockEnderChest.setBlockName("enderchest");
         GameRegistry.registerBlock(blockEnderChest, ItemEnderStorage.class, "enderChest");
-        MinecraftForge.EVENT_BUS.register(blockEnderChest);
+        MinecraftForge.EVENT_BUS.register(blockEnderChest.handler);
 
         itemEnderPouch = new ItemEnderPouch();
         itemEnderPouch.setUnlocalizedName("enderpouch");
