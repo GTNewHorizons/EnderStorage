@@ -24,6 +24,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import codechicken.enderstorage.EnderStorage;
@@ -40,8 +41,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockEnderStorage extends BlockContainer {
 
-    private RayTracer rayTracer = new RayTracer();
-    public EventHandler handler = new EventHandler();
+    private final RayTracer rayTracer = new RayTracer();
 
     public BlockEnderStorage() {
         super(Material.rock);
@@ -49,7 +49,7 @@ public class BlockEnderStorage extends BlockContainer {
         setResistance(100F);
         setStepSound(soundTypeStone);
         setCreativeTab(CreativeTabs.tabDecorations);
-        handler = new EventHandler();
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 
     @Override
