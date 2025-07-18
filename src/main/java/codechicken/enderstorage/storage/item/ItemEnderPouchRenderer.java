@@ -31,16 +31,17 @@ public class ItemEnderPouchRenderer implements IItemRenderer {
                 GL11.glTranslatef(1, 1, 0);
                 GL11.glScalef(-1, -1, 1);
         }
-        Tessellator.instance.startDrawingQuads();
-        Tessellator.instance.addVertexWithUV(0, 0, 0, 0, 0);
-        Tessellator.instance.addVertexWithUV(0, 1, 0, 0, 0.0625);
-        Tessellator.instance.addVertexWithUV(1, 1, 0, 0.0625, 0.0625);
-        Tessellator.instance.addVertexWithUV(1, 0, 0, 0.0625, 0);
-        Tessellator.instance.addVertexWithUV(0, 0, 0, 0, 0);
-        Tessellator.instance.addVertexWithUV(1, 0, 0, 0.0625, 0);
-        Tessellator.instance.addVertexWithUV(1, 1, 0, 0.0625, 0.0625);
-        Tessellator.instance.addVertexWithUV(0, 1, 0, 0, 0.0625);
-        Tessellator.instance.draw();
+        final Tessellator tess = Tessellator.instance;
+        tess.startDrawingQuads();
+        tess.addVertexWithUV(0, 0, 0, 0, 0);
+        tess.addVertexWithUV(0, 1, 0, 0, 0.0625);
+        tess.addVertexWithUV(1, 1, 0, 0.0625, 0.0625);
+        tess.addVertexWithUV(1, 0, 0, 0.0625, 0);
+        tess.addVertexWithUV(0, 0, 0, 0, 0);
+        tess.addVertexWithUV(1, 0, 0, 0.0625, 0);
+        tess.addVertexWithUV(1, 1, 0, 0.0625, 0.0625);
+        tess.addVertexWithUV(0, 1, 0, 0, 0.0625);
+        tess.draw();
         GL11.glPopMatrix();
     }
 }
