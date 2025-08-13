@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -215,8 +216,216 @@ public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler {
             pressure_state.invert();
             return true;
         }
-        return FluidUtils.fillTankWithContainer(this, player)
-                || FluidUtils.emptyTankIntoContainer(this, player, storage.getFluid());
+
+        ItemStack held = player.getCurrentEquippedItem();
+        if (held == null) return false;
+
+        // Look for IFluidContainerItem (Large Fluid Cells / Flasks) - IFCI henceforth
+        if (held.getItem() instanceof net.minecraftforge.fluids.IFluidContainerItem) {
+            if (handleIFCI(player, held)) return true;
+        }
+
+        // If no IFCI then regular Fluid Container logic (IC2 / GT cells / buckets) - FC henceforth
+        if (handleFCFullToEmpty(player, held)) return true;
+        if (handleFCEmptyToFull(player, held)) return true;
+
+        return false;
+    }
+
+    // Handles the IFCIs
+    private boolean handleIFCI(EntityPlayer player, ItemStack held) {
+        final net.minecraftforge.fluids.IFluidContainerItem cont = (net.minecraftforge.fluids.IFluidContainerItem) held
+                .getItem();
+
+        // Tests for stacked item & unstacks for use
+        ItemStack target = held;
+        boolean split = false;
+        if (held.stackSize > 1) {
+            target = held.copy();
+            target.stackSize = 1;
+            split = true;
+        }
+
+        // This is for putting cell fluid -) tank
+        net.minecraftforge.fluids.FluidStack inCell = cont.getFluid(target);
+        if (inCell != null && inCell.amount > 0) {
+            int tankCan = fill(null, inCell, false);
+            int wantMove = Math.min(tankCan, inCell.amount);
+            if (wantMove > 0) {
+                // simulated drain to check if possible
+                net.minecraftforge.fluids.FluidStack simDrain = cont.drain(target, wantMove, false);
+                if (simDrain != null && simDrain.amount > 0) {
+                    if (worldObj.isRemote) return true;
+
+                    // For creative mode makes changes to tank but not for item
+                    if (player.capabilities.isCreativeMode) {
+                        fill(
+                                null,
+                                new net.minecraftforge.fluids.FluidStack(simDrain.getFluid(), simDrain.amount),
+                                true);
+                        return true;
+                    }
+
+                    // Actualizing simulated drain if true
+                    net.minecraftforge.fluids.FluidStack drained = cont.drain(target, simDrain.amount, true);
+                    if (drained != null && drained.amount > 0) {
+                        fill(null, drained, true);
+
+                        // If split bc multiple in stack give other cell & sync inv
+                        if (split) {
+                            held.stackSize--;
+                            giveOrDrop(player, target);
+                        }
+                        syncInv(player);
+                    }
+                    return true;
+                }
+            }
+        }
+
+        // This is for filling cell from tank
+        net.minecraftforge.fluids.FluidStack tankFluid = storage.getFluid();
+        if (tankFluid != null && tankFluid.getFluid() != null) {
+            final net.minecraftforge.fluids.FluidStack currentFluid = cont.getFluid(target);
+            if (currentFluid == null || currentFluid.getFluid() == tankFluid.getFluid()) {
+                int capacity = cont.getCapacity(target);
+                int remaining = capacity - (currentFluid != null ? currentFluid.amount : 0);
+                if (remaining > 0) {
+                    int wantMove = Math.min(remaining, tankFluid.amount);
+                    if (wantMove > 0) {
+                        // Simulated fill
+                        int canFill = cont.fill(
+                                target,
+                                new net.minecraftforge.fluids.FluidStack(tankFluid.getFluid(), wantMove),
+                                false);
+                        if (canFill > 0) {
+                            if (worldObj.isRemote) return true;
+
+                            // Will still drain from tank but not change item if in creative mode
+                            if (player.capabilities.isCreativeMode) {
+                                net.minecraftforge.fluids.FluidStack pulled = drain(null, canFill, true);
+                                return pulled != null && pulled.amount > 0;
+                            }
+
+                            // Actualized simulated fill if true
+                            net.minecraftforge.fluids.FluidStack pulled = drain(null, canFill, true);
+                            if (pulled != null && pulled.amount > 0) {
+                                int filled = cont.fill(target, pulled, true);
+                                int leftover = pulled.amount - filled;
+                                if (leftover > 0) {
+                                    fill(
+                                            null,
+                                            new net.minecraftforge.fluids.FluidStack(pulled.getFluid(), leftover),
+                                            true);
+                                }
+
+                                // Split cell fill logic
+                                if (filled > 0) {
+                                    if (split) {
+                                        held.stackSize--;
+                                        giveOrDrop(player, target);
+                                    }
+                                    syncInv(player);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // False called if not IFCI cell
+        return false;
+    }
+
+    // For putting FC into tank
+    private boolean handleFCFullToEmpty(EntityPlayer player, ItemStack held) {
+        // Isolate to one cell
+        ItemStack single = held.copy();
+        single.stackSize = 1;
+
+        // Check FC, check tank, do fill
+        net.minecraftforge.fluids.FluidStack offered = net.minecraftforge.fluids.FluidContainerRegistry
+                .getFluidForFilledItem(single);
+        if (offered == null || offered.amount <= 0) return false;
+        if (fill(null, offered, false) < offered.amount) return false;
+        if (worldObj.isRemote) return true;
+        fill(null, offered, true);
+
+        // Creative mode exception to alter tank not item
+        if (!player.capabilities.isCreativeMode) {
+            held.stackSize--;
+            if (held.stackSize <= 0) {
+                player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
+            }
+
+            // Return empty container & sync if no creative
+            ItemStack empty = net.minecraftforge.fluids.FluidContainerRegistry.drainFluidContainer(single);
+            if (empty != null) giveOrDrop(player, empty);
+            syncInv(player);
+        }
+        return true;
+    }
+
+    // For putting tank liquid into FC
+    private boolean handleFCEmptyToFull(EntityPlayer player, ItemStack held) {
+        // Get Fluid
+        net.minecraftforge.fluids.FluidStack tankFluid = storage.getFluid();
+        if (tankFluid == null || tankFluid.getFluid() == null) return false;
+
+        // Isolate to one cell
+        ItemStack singleEmpty = held.copy();
+        singleEmpty.stackSize = 1;
+
+        // Build fake cell to get mb number (unit) needed to fill cell (typically 1000 or 144)
+        ItemStack preview = net.minecraftforge.fluids.FluidContainerRegistry.fillFluidContainer(
+                new net.minecraftforge.fluids.FluidStack(tankFluid.getFluid(), tankFluid.amount),
+                singleEmpty);
+        if (preview == null) return false;
+        net.minecraftforge.fluids.FluidStack inside = net.minecraftforge.fluids.FluidContainerRegistry
+                .getFluidForFilledItem(preview);
+        if (inside == null || inside.amount <= 0) return false;
+        int unit = inside.amount;
+
+        // Checks if drain is possible and does if so
+        net.minecraftforge.fluids.FluidStack can = drain(null, unit, false);
+        if (can == null || can.amount < unit) return false;
+        if (worldObj.isRemote) return true;
+        drain(null, unit, true);
+
+        // Duck out early if creative since only need tank change
+        if (player.capabilities.isCreativeMode) {
+            return true;
+        }
+
+        // Give the filled cell if not creative & syncinv
+        if (held.stackSize > 1) {
+            held.stackSize--;
+            giveOrDrop(player, preview);
+        } else {
+            player.inventory.setInventorySlotContents(player.inventory.currentItem, preview);
+        }
+        syncInv(player);
+        return true;
+    }
+
+    // Add item to inv or drop if inv full
+    private static void giveOrDrop(EntityPlayer player, ItemStack stack) {
+        if (stack == null) return;
+        boolean added = player.inventory.addItemStackToInventory(stack);
+        if (!added) {
+            player.dropPlayerItemWithRandomChoice(stack, false);
+        }
+    }
+
+    // sync for instant client ui update
+    private static void syncInv(EntityPlayer player) {
+        player.inventory.markDirty();
+        if (player instanceof net.minecraft.entity.player.EntityPlayerMP) {
+            net.minecraft.entity.player.EntityPlayerMP mp = (net.minecraft.entity.player.EntityPlayerMP) player;
+            mp.inventoryContainer.detectAndSendChanges();
+            mp.sendContainerToPlayer(mp.inventoryContainer);
+        }
     }
 
     @Override
