@@ -220,12 +220,12 @@ public class TileEnderTank extends TileFrequencyOwner implements IFluidHandler {
         ItemStack held = player.getCurrentEquippedItem();
         if (held == null) return false;
 
-        // Look for IFluidContainerItem (Large Fluid Cells / Flasks) - IFCI henceforth
+        // Look for IFluidContainerItem (Large Fluid Cells) - IFCI henceforth
         if (held.getItem() instanceof net.minecraftforge.fluids.IFluidContainerItem) {
             if (handleIFCI(player, held)) return true;
         }
 
-        // If no IFCI then regular Fluid Container logic (IC2 / GT cells / buckets) - FC henceforth
+        // If no IFCI then regular Fluid Container logic (IC2 / GT cells / buckets / flasks) - FC henceforth
         if (handleFCFullToEmpty(player, held)) return true;
         if (handleFCEmptyToFull(player, held)) return true;
 
