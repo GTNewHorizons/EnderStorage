@@ -57,6 +57,7 @@ public class ItemEnderStorage extends ItemBlock implements IFluidContainerItem {
         if (!getOwner(stack).equals("global")) list.add(getOwner(stack));
     }
 
+    // This function can be used in the functions down below to have ender tank be used as an IFCI, currently disabled.
     private EnderLiquidStorage getLiquidStorage(ItemStack stack) {
         return (EnderLiquidStorage) EnderStorageManager
                 .instance(FMLCommonHandler.instance().getEffectiveSide().isClient())
@@ -65,31 +66,21 @@ public class ItemEnderStorage extends ItemBlock implements IFluidContainerItem {
 
     @Override
     public FluidStack getFluid(ItemStack container) {
-        if (getMetadata(container.getItemDamage()) == 1) return getLiquidStorage(container).getFluid();
-
         return null;
     }
 
     @Override
     public int getCapacity(ItemStack container) {
-        if (getMetadata(container.getItemDamage()) == 1) return EnderLiquidStorage.CAPACITY;
-
         return 0;
     }
 
     @Override
     public int fill(ItemStack container, FluidStack resource, boolean doFill) {
-        if (getMetadata(container.getItemDamage()) == 1)
-            return getLiquidStorage(container).fill(null, resource, doFill);
-
         return 0;
     }
 
     @Override
     public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
-        if (getMetadata(container.getItemDamage()) == 1)
-            return getLiquidStorage(container).drain(null, maxDrain, doDrain);
-
         return null;
     }
 }
