@@ -12,7 +12,7 @@ public class EnderStorageHandleManager {
 
     public interface IHandleStorageInfo {
 
-        void handlePacket(String owner, String type, NBTTagCompound[] compounds);
+        void handlePacket(String owner, String type, Map<Integer, NBTTagCompound> compoundMap);
     }
 
     public static void registerHandleStorageInfo(String type, IHandleStorageInfo handleStorageInfo) {

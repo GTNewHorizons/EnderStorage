@@ -1,6 +1,8 @@
 package codechicken.enderstorage.internal;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -60,10 +62,11 @@ public class EnderStorageCPH implements IClientPacketHandler {
         String owner = packet.readString();
         String type = packet.readString();
         NBTTagCompound data = packet.readNBTTagCompound();
-        NBTTagCompound[] compounds = Arrays.stream(data.getIntArray("freqs"))
-                .mapToObj(freq -> data.getCompoundTag(String.valueOf(freq))).toArray(NBTTagCompound[]::new);
+        Map<Integer, NBTTagCompound> compoundMap = Arrays.stream(data.getIntArray("freqs")).boxed()
+                .collect(Collectors.toMap(freq -> freq, freq -> data.getCompoundTag(freq.toString())));
+
         EnderStorageHandleManager.getHandleStorageInfoList()
-                .forEach(action -> action.handlePacket(owner, type, compounds));
+                .forEach(action -> action.handlePacket(owner, type, compoundMap));
     }
 
     private void handleTankTilePacket(WorldClient world, BlockCoord pos, PacketCustom packet) {
