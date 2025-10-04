@@ -65,8 +65,7 @@ public class EnderStorageCPH implements IClientPacketHandler {
         Map<Integer, NBTTagCompound> compoundMap = Arrays.stream(data.getIntArray("freqs")).boxed()
                 .collect(Collectors.toMap(freq -> freq, freq -> data.getCompoundTag(freq.toString())));
 
-        EnderStorageHandleManager.getHandleStorageInfoList()
-                .forEach(action -> action.handlePacket(owner, type, compoundMap));
+        EnderStorageHandleManager.execHandleStorageInfo(owner, type, compoundMap);
     }
 
     private void handleTankTilePacket(WorldClient world, BlockCoord pos, PacketCustom packet) {

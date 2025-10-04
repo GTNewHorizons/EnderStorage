@@ -1,6 +1,5 @@
 package codechicken.enderstorage.api;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,14 +11,14 @@ public class EnderStorageHandleManager {
 
     public interface IHandleStorageInfo {
 
-        void handlePacket(String owner, String type, Map<Integer, NBTTagCompound> compoundMap);
+        void handle(String owner, String type, Map<Integer, NBTTagCompound> compoundMap);
     }
 
     public static void registerHandleStorageInfo(String type, IHandleStorageInfo handleStorageInfo) {
         handleStorageInfoMap.put(type, handleStorageInfo);
     }
 
-    public static Collection<IHandleStorageInfo> getHandleStorageInfoList() {
-        return handleStorageInfoMap.values();
+    public static void execHandleStorageInfo(String owner, String type, Map<Integer, NBTTagCompound> compoundMap) {
+        handleStorageInfoMap.values().forEach(handler -> handler.handle(owner, type, compoundMap));
     }
 }
