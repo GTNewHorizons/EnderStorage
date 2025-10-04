@@ -1,10 +1,14 @@
 package codechicken.enderstorage.internal;
 
+import java.util.Arrays;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.tileentity.TileEntity;
 
+import codechicken.enderstorage.api.EnderStorageHandleManager;
 import codechicken.enderstorage.api.EnderStorageManager;
 import codechicken.enderstorage.common.TileFrequencyOwner;
 import codechicken.enderstorage.storage.item.EnderItemStorage;
@@ -46,7 +50,20 @@ public class EnderStorageCPH implements IClientPacketHandler {
             case 6:
                 handleTankTilePacket(mc.theWorld, packet.readCoord(), packet);
                 break;
+            case 7:
+                handleStorageInfoEvent(packet);
+                break;
         }
+    }
+
+    private void handleStorageInfoEvent(PacketCustom packet) {
+        String owner = packet.readString();
+        String type = packet.readString();
+        NBTTagCompound data = packet.readNBTTagCompound();
+        NBTTagCompound[] compounds = Arrays.stream(data.getIntArray("freqs"))
+                .mapToObj(freq -> data.getCompoundTag(String.valueOf(freq))).toArray(NBTTagCompound[]::new);
+        EnderStorageHandleManager.getHandleStorageInfoList()
+                .forEach(action -> action.handlePacket(owner, type, compounds));
     }
 
     private void handleTankTilePacket(WorldClient world, BlockCoord pos, PacketCustom packet) {
