@@ -7,9 +7,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import codechicken.core.CommonUtils;
 import codechicken.core.launch.CodeChickenCorePlugin;
 import codechicken.enderstorage.api.EnderStorageManager;
@@ -36,8 +33,6 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
         dependencies = "required-after:CodeChickenCore@[" + CodeChickenCorePlugin.version + ",)",
         acceptedMinecraftVersions = CodeChickenCorePlugin.mcVersion)
 public class EnderStorage {
-
-    public static final Logger log = LogManager.getLogger("EnderStorage");
 
     @SidedProxy(
             clientSide = "codechicken.enderstorage.internal.EnderStorageClientProxy",

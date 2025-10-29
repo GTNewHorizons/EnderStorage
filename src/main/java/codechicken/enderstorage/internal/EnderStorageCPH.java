@@ -9,10 +9,11 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.MinecraftForge;
 
-import codechicken.enderstorage.api.EnderStorageHandleManager;
 import codechicken.enderstorage.api.EnderStorageManager;
 import codechicken.enderstorage.common.TileFrequencyOwner;
+import codechicken.enderstorage.event.EnderStorageStoredEvent;
 import codechicken.enderstorage.storage.item.EnderItemStorage;
 import codechicken.enderstorage.storage.liquid.TankSynchroniser;
 import codechicken.enderstorage.storage.liquid.TileEnderTank;
@@ -53,19 +54,16 @@ public class EnderStorageCPH implements IClientPacketHandler {
                 handleTankTilePacket(mc.theWorld, packet.readCoord(), packet);
                 break;
             case 7:
-                handleStorageInfoEvent(packet);
+                String owner = packet.readString();
+                String type = packet.readString();
+                NBTTagCompound nbtTagCompound = packet.readNBTTagCompound();
+                Map<Integer, NBTTagCompound> compoundMap = Arrays.stream(nbtTagCompound.getIntArray("freqs")).boxed()
+                        .collect(
+                                Collectors.toMap(freq -> freq, freq -> nbtTagCompound.getCompoundTag(freq.toString())));
+
+                MinecraftForge.EVENT_BUS.post(new EnderStorageStoredEvent(owner, type, compoundMap));
                 break;
         }
-    }
-
-    private void handleStorageInfoEvent(PacketCustom packet) {
-        String owner = packet.readString();
-        String type = packet.readString();
-        NBTTagCompound data = packet.readNBTTagCompound();
-        Map<Integer, NBTTagCompound> compoundMap = Arrays.stream(data.getIntArray("freqs")).boxed()
-                .collect(Collectors.toMap(freq -> freq, freq -> data.getCompoundTag(freq.toString())));
-
-        EnderStorageHandleManager.execHandleStorageInfo(owner, type, compoundMap);
     }
 
     private void handleTankTilePacket(WorldClient world, BlockCoord pos, PacketCustom packet) {

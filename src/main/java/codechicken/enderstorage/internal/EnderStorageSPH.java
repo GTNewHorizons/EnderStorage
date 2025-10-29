@@ -34,20 +34,17 @@ public class EnderStorageSPH implements IServerPacketHandler {
                 TankSynchroniser.handleVisiblityPacket(sender, packet);
                 break;
             case 2:
-                sendStorageInfo(packet, sender);
+                sendStorageStored(packet, sender);
                 break;
         }
     }
 
-    private void sendStorageInfo(PacketCustom packet, EntityPlayerMP sender) {
+    private void sendStorageStored(PacketCustom packet, EntityPlayerMP sender) {
         String owner = packet.readString();
         String type = packet.readString();
         if (Objects.equals(owner, "global")) {
             if (!EnderStorage.allPlayerCanSeePublicInventory && MinecraftServer.getServer().getConfigurationManager()
                     .func_152603_m().func_152700_a(sender.getDisplayName()) == null) {
-                EnderStorage.log.warn(
-                        "Player {} tried to access global Ender Storage without permission",
-                        sender.getDisplayName());
                 return;
             }
         } else {
