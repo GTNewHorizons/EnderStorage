@@ -80,7 +80,7 @@ public class EnderStorage {
         enderTankSize = config.getTag("enderTankSize").setComment("Set the size of ender tanks in buckets (x1000)")
                 .getIntValue(256);
         allPlayerCanSeePublicInventory = config.getTag("allPlayerCanSeePublicInventory").setComment(
-                "When set to true\nAny player using a third-party client mod can view all valid ender chests/ender cans on the public frequency\nBy default, only OP players can")
+                "When set to true\nAny player using a third-party client mod can view all valid ender chests/ender tanks on the public frequency\nBy default, only OP players can")
                 .getBooleanValue(false);
 
         EnderStorageManager.loadConfig(config);

@@ -55,7 +55,7 @@ public class EnderStorageCPH implements IClientPacketHandler {
                 break;
             case 7:
                 String owner = packet.readString();
-                String type = packet.readString();
+                int type = packet.readInt();
                 NBTTagCompound nbtTagCompound = packet.readNBTTagCompound();
                 Map<Integer, NBTTagCompound> compoundMap = Arrays.stream(nbtTagCompound.getIntArray("freqs")).boxed()
                         .collect(

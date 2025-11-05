@@ -41,8 +41,10 @@ public class EnderStorageSPH implements IServerPacketHandler {
 
     private void sendStorageStored(PacketCustom packet, EntityPlayerMP sender) {
         String owner = packet.readString();
-        String type = packet.readString();
+        int type = packet.readInt();
         if (Objects.equals(owner, "global")) {
+            // If the player is not an OP and allPlayerCanSeePublicInventory is not turned on, the global channel
+            // returns nothing
             if (!EnderStorage.allPlayerCanSeePublicInventory && MinecraftServer.getServer().getConfigurationManager()
                     .func_152603_m().func_152700_a(sender.getDisplayName()) == null) {
                 return;
@@ -53,7 +55,7 @@ public class EnderStorageSPH implements IServerPacketHandler {
 
         PacketCustom res = new PacketCustom(channel, 7);
         res.writeString(owner);
-        res.writeString(type);
+        res.writeInt(type);
 
         EnderStorageManager storageManager = EnderStorageManager.instance(false);
 
@@ -61,10 +63,10 @@ public class EnderStorageSPH implements IServerPacketHandler {
         List<Integer> freqList = new ArrayList<>();
         String owner_ = owner;
         switch (type) {
-            case "item":
+            case EnderItemStoragePlugin.index:
                 Map<Integer, EnderItemStorage> chestMap = new LinkedHashMap<>();
                 IntStream.rangeClosed(0, 0xFFF).forEach(
-                        freq -> chestMap.put(freq, (EnderItemStorage) storageManager.getStorage(owner_, freq, type)));
+                        freq -> chestMap.put(freq, (EnderItemStorage) storageManager.getStorage(owner_, freq, "item")));
 
                 chestMap.entrySet().stream().filter(entry -> !EnderItemStoragePlugin.isEmpty(entry.getValue()))
                         .forEach(chest -> {
@@ -72,11 +74,11 @@ public class EnderStorageSPH implements IServerPacketHandler {
                             data.setTag(chest.getKey().toString(), chest.getValue().saveToTag());
                         });
                 break;
-            case "liquid":
+            case EnderLiquidStoragePlugin.index:
                 Map<Integer, EnderLiquidStorage> liquidMap = new LinkedHashMap<>();
                 IntStream.rangeClosed(0, 0xFFF).forEach(
                         freq -> liquidMap
-                                .put(freq, (EnderLiquidStorage) storageManager.getStorage(owner_, freq, type)));
+                                .put(freq, (EnderLiquidStorage) storageManager.getStorage(owner_, freq, "liquid")));
 
                 liquidMap.entrySet().stream().filter(entry -> !EnderLiquidStoragePlugin.isEmpty(entry.getValue()))
                         .forEach(tank -> {

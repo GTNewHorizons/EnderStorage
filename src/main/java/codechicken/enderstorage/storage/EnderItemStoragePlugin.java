@@ -13,6 +13,7 @@ import codechicken.lib.config.ConfigTag;
 
 public class EnderItemStoragePlugin implements EnderStoragePlugin {
 
+    public static final int index = 1;
     public static final int[] sizes = new int[] { 9, 27, 54 };
     public static int configSize;
 
