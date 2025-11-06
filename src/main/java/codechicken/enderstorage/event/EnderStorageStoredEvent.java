@@ -2,11 +2,11 @@ package codechicken.enderstorage.event;
 
 import java.util.Map;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import codechicken.enderstorage.api.AbstractEnderStorage;
 import codechicken.enderstorage.storage.EnderItemStoragePlugin;
 import codechicken.enderstorage.storage.EnderLiquidStoragePlugin;
-import net.minecraft.nbt.NBTTagCompound;
-
 import cpw.mods.fml.common.eventhandler.Event;
 
 public class EnderStorageStoredEvent extends Event {
@@ -16,15 +16,14 @@ public class EnderStorageStoredEvent extends Event {
      */
     public final String owner;
     /**
-     * storage type
-     * 1-item or 2-liquid
-     * {@link EnderItemStoragePlugin#index}
+     * storage type 1-item or 2-liquid <br/>
+     * {@link EnderItemStoragePlugin#index} <br/>
      * {@link EnderLiquidStoragePlugin#index}
      */
     public final int type;
     /**
-     * stored data
-     * key: channel
+     * stored data <br/>
+     * key: channel <br/>
      * value: the corresponding stored nbt form{@link AbstractEnderStorage#saveToTag()}
      */
     public final Map<Integer, NBTTagCompound> compoundMap;
