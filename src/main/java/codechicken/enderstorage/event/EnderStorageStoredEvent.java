@@ -5,20 +5,19 @@ import java.util.Map;
 import net.minecraft.nbt.NBTTagCompound;
 
 import codechicken.enderstorage.api.AbstractEnderStorage;
-import codechicken.enderstorage.storage.EnderItemStoragePlugin;
-import codechicken.enderstorage.storage.EnderLiquidStoragePlugin;
 import cpw.mods.fml.common.eventhandler.Event;
 
 public class EnderStorageStoredEvent extends Event {
 
+    public static final int TYPE_ITEM = 1;
+    public static final int TYPE_LIQUID = 2;
+
     /**
-     * global or playerName
+     * is global? or private
      */
-    public final String owner;
+    public final boolean global;
     /**
-     * storage type 1-item or 2-liquid <br/>
-     * {@link EnderItemStoragePlugin#index} <br/>
-     * {@link EnderLiquidStoragePlugin#index}
+     * storage type 1-item or 2-liquid
      */
     public final int type;
     /**
@@ -28,8 +27,8 @@ public class EnderStorageStoredEvent extends Event {
      */
     public final Map<Integer, NBTTagCompound> compoundMap;
 
-    public EnderStorageStoredEvent(String owner, int type, Map<Integer, NBTTagCompound> compoundMap) {
-        this.owner = owner;
+    public EnderStorageStoredEvent(boolean global, int type, Map<Integer, NBTTagCompound> compoundMap) {
+        this.global = global;
         this.type = type;
         this.compoundMap = compoundMap;
     }

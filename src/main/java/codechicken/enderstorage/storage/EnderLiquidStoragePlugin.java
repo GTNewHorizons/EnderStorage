@@ -13,8 +13,6 @@ import codechicken.lib.config.ConfigTag;
 
 public class EnderLiquidStoragePlugin implements EnderStoragePlugin {
 
-    public static final int index = 2;
-
     @Override
     public AbstractEnderStorage createEnderStorage(EnderStorageManager manager, String owner, int freq) {
         return new EnderLiquidStorage(manager, owner, freq);

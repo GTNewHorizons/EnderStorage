@@ -54,14 +54,14 @@ public class EnderStorageCPH implements IClientPacketHandler {
                 handleTankTilePacket(mc.theWorld, packet.readCoord(), packet);
                 break;
             case 7:
-                String owner = packet.readString();
+                boolean global = packet.readBoolean();
                 int type = packet.readInt();
                 NBTTagCompound nbtTagCompound = packet.readNBTTagCompound();
                 Map<Integer, NBTTagCompound> compoundMap = Arrays.stream(nbtTagCompound.getIntArray("freqs")).boxed()
                         .collect(
                                 Collectors.toMap(freq -> freq, freq -> nbtTagCompound.getCompoundTag(freq.toString())));
 
-                MinecraftForge.EVENT_BUS.post(new EnderStorageStoredEvent(owner, type, compoundMap));
+                MinecraftForge.EVENT_BUS.post(new EnderStorageStoredEvent(global, type, compoundMap));
                 break;
         }
     }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +14,7 @@ import net.minecraft.server.MinecraftServer;
 
 import codechicken.enderstorage.EnderStorage;
 import codechicken.enderstorage.api.EnderStorageManager;
+import codechicken.enderstorage.event.EnderStorageStoredEvent;
 import codechicken.enderstorage.storage.EnderItemStoragePlugin;
 import codechicken.enderstorage.storage.EnderLiquidStoragePlugin;
 import codechicken.enderstorage.storage.item.EnderItemStorage;
@@ -40,21 +40,23 @@ public class EnderStorageSPH implements IServerPacketHandler {
     }
 
     private void sendStorageStored(PacketCustom packet, EntityPlayerMP sender) {
-        String owner = packet.readString();
+        boolean global = packet.readBoolean();
         int type = packet.readInt();
-        if (Objects.equals(owner, "global")) {
+        String owner;
+        if (global) {
             // If the player is not an OP and allPlayerCanSeePublicInventory is not turned on, the global channel
             // returns nothing
             if (!EnderStorage.allPlayerCanSeePublicInventory && MinecraftServer.getServer().getConfigurationManager()
                     .func_152603_m().func_152700_a(sender.getDisplayName()) == null) {
                 return;
             }
+            owner = "global";
         } else {
             owner = sender.getDisplayName();
         }
 
         PacketCustom res = new PacketCustom(channel, 7);
-        res.writeString(owner);
+        res.writeBoolean(global);
         res.writeInt(type);
 
         EnderStorageManager storageManager = EnderStorageManager.instance(false);
@@ -63,7 +65,7 @@ public class EnderStorageSPH implements IServerPacketHandler {
         List<Integer> freqList = new ArrayList<>();
         String owner_ = owner;
         switch (type) {
-            case EnderItemStoragePlugin.index:
+            case EnderStorageStoredEvent.TYPE_ITEM:
                 Map<Integer, EnderItemStorage> chestMap = new LinkedHashMap<>();
                 IntStream.rangeClosed(0, 0xFFF).forEach(
                         freq -> chestMap.put(freq, (EnderItemStorage) storageManager.getStorage(owner_, freq, "item")));
@@ -74,7 +76,7 @@ public class EnderStorageSPH implements IServerPacketHandler {
                             data.setTag(chest.getKey().toString(), chest.getValue().saveToTag());
                         });
                 break;
-            case EnderLiquidStoragePlugin.index:
+            case EnderStorageStoredEvent.TYPE_LIQUID:
                 Map<Integer, EnderLiquidStorage> liquidMap = new LinkedHashMap<>();
                 IntStream.rangeClosed(0, 0xFFF).forEach(
                         freq -> liquidMap
