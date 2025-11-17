@@ -60,8 +60,10 @@ public class EnderStorageCPH implements IClientPacketHandler {
                 Map<Integer, NBTTagCompound> compoundMap = Arrays.stream(nbtTagCompound.getIntArray("freqs")).boxed()
                         .collect(
                                 Collectors.toMap(freq -> freq, freq -> nbtTagCompound.getCompoundTag(freq.toString())));
+                if (compoundMap.isEmpty()) return;
 
-                MinecraftForge.EVENT_BUS.post(new EnderStorageStoredEvent(global, type, compoundMap));
+                updateStorage(global, type, compoundMap);
+                MinecraftForge.EVENT_BUS.post(new EnderStorageStoredEvent(global, type));
                 break;
         }
     }
@@ -75,5 +77,24 @@ public class EnderStorageCPH implements IClientPacketHandler {
         TileEntity tile = world.getTileEntity(pos.x, pos.y, pos.z);
 
         if (tile instanceof TileFrequencyOwner) ((TileFrequencyOwner) tile).handleDescriptionPacket(packet);
+    }
+
+    private void updateStorage(boolean global, int type, Map<Integer, NBTTagCompound> compoundMap) {
+        EnderStorageManager storageManager = EnderStorageManager.instance(true);
+        String owner = global ? "global" : Minecraft.getMinecraft().thePlayer.getDisplayName();
+        String typeStr;
+        switch (type) {
+            case EnderStorageStoredEvent.TYPE_ITEM:
+                typeStr = "item";
+                break;
+            case EnderStorageStoredEvent.TYPE_LIQUID:
+                typeStr = "liquid";
+                break;
+            default:
+                return;
+        }
+        for (Map.Entry<Integer, NBTTagCompound> entryMap : compoundMap.entrySet()) {
+            storageManager.setStorage(owner, entryMap.getKey(), typeStr, entryMap.getValue());
+        }
     }
 }
