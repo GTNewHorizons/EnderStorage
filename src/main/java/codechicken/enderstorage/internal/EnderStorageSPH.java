@@ -88,6 +88,10 @@ public class EnderStorageSPH implements IServerPacketHandler {
                             data.setTag(tank.getKey().toString(), tank.getValue().saveToTag());
                         });
                 break;
+            default:
+                EnderStorage.LOGGER
+                        .error("EnderStorageSPH:Unknown EnderStorageStoredEvent TYPE,no information is returned.");
+                return;
         }
         data.setIntArray("freqs", freqList.stream().mapToInt(i -> i).toArray());
 

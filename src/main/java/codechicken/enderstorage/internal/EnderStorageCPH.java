@@ -11,6 +11,7 @@ import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 
+import codechicken.enderstorage.EnderStorage;
 import codechicken.enderstorage.api.EnderStorageManager;
 import codechicken.enderstorage.common.TileFrequencyOwner;
 import codechicken.enderstorage.event.EnderStorageStoredEvent;
@@ -91,6 +92,8 @@ public class EnderStorageCPH implements IClientPacketHandler {
                 typeStr = "liquid";
                 break;
             default:
+                EnderStorage.LOGGER
+                        .error("EnderStorageCPH:Unknown EnderStorageStoredEvent TYPE,no information is returned.");
                 return;
         }
         for (Map.Entry<Integer, NBTTagCompound> entryMap : compoundMap.entrySet()) {
