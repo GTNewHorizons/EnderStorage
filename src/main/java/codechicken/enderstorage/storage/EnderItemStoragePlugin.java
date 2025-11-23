@@ -37,4 +37,13 @@ public class EnderItemStoragePlugin implements EnderStoragePlugin {
         for (AbstractEnderStorage inv : list) if (((EnderItemStorage) inv).openCount() > 0)
             EnderStorageSPH.sendOpenUpdateTo(player, inv.owner, inv.freq, true);
     }
+
+    public static boolean isEmpty(EnderItemStorage storage) {
+        for (int i = 0; i < EnderItemStoragePlugin.sizes[EnderItemStoragePlugin.configSize]; i++) {
+            if (storage.getStackInSlot(i) != null) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

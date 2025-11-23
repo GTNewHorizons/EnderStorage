@@ -159,6 +159,21 @@ public class EnderStorageManager {
         return storage;
     }
 
+    public void setStorage(String owner, int freq, String type, NBTTagCompound nbtTagCompound) {
+        if (owner == null) owner = "global";
+        String key = freq + "|" + owner + "|" + type;
+        AbstractEnderStorage storage = storageMap.get(key);
+        if (storage == null) {
+            storage = plugins.get(type).createEnderStorage(this, owner, freq);
+            storage.loadFromTag(nbtTagCompound);
+            storageMap.put(key, storage);
+            storageList.get(type).add(storage);
+        } else {
+            storage.loadFromTag(nbtTagCompound);
+        }
+
+    }
+
     public static int getFreqFromColours(int colour1, int colour2, int colour3) {
         return ((colour1 & 0xF) << 8) + ((colour2 & 0xF) << 4) + (colour3 & 0xF);
     }

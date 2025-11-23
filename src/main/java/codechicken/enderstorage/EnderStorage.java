@@ -7,6 +7,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import codechicken.core.CommonUtils;
 import codechicken.core.launch.CodeChickenCorePlugin;
 import codechicken.enderstorage.api.EnderStorageManager;
@@ -27,12 +30,15 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 
 @Mod(
-        modid = "EnderStorage",
-        name = "EnderStorage",
+        modid = EnderStorage.MOD_NAME,
+        name = EnderStorage.MOD_NAME,
         version = "GRADLETOKEN_VERSION",
         dependencies = "required-after:CodeChickenCore@[" + CodeChickenCorePlugin.version + ",)",
         acceptedMinecraftVersions = CodeChickenCorePlugin.mcVersion)
 public class EnderStorage {
+
+    public static final String MOD_NAME = "EnderStorage";
+    public static final Logger LOGGER = LogManager.getLogger(EnderStorage.MOD_NAME);
 
     @SidedProxy(
             clientSide = "codechicken.enderstorage.internal.EnderStorageClientProxy",
@@ -51,6 +57,7 @@ public class EnderStorage {
     public static boolean disableFXChest;
     public static boolean disableFXTank;
     public static int enderTankSize;
+    public static boolean allPlayerCanSeePublicInventory;
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
@@ -78,6 +85,9 @@ public class EnderStorage {
                 .getBooleanValue(false);
         enderTankSize = config.getTag("enderTankSize").setComment("Set the size of ender tanks in buckets (x1000)")
                 .getIntValue(256);
+        allPlayerCanSeePublicInventory = config.getTag("allPlayerCanSeePublicInventory").setComment(
+                "When set to true\nAny player using a third-party client mod can view all valid ender chests/ender tanks on the public frequency\nBy default, only OP players can")
+                .getBooleanValue(false);
 
         EnderStorageManager.loadConfig(config);
         EnderStorageManager.registerPlugin(new EnderItemStoragePlugin());

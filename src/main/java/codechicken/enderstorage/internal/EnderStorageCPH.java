@@ -1,12 +1,20 @@
 package codechicken.enderstorage.internal;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.MinecraftForge;
 
+import codechicken.enderstorage.EnderStorage;
 import codechicken.enderstorage.api.EnderStorageManager;
 import codechicken.enderstorage.common.TileFrequencyOwner;
+import codechicken.enderstorage.event.EnderStorageStoredEvent;
 import codechicken.enderstorage.storage.item.EnderItemStorage;
 import codechicken.enderstorage.storage.liquid.TankSynchroniser;
 import codechicken.enderstorage.storage.liquid.TileEnderTank;
@@ -46,6 +54,18 @@ public class EnderStorageCPH implements IClientPacketHandler {
             case 6:
                 handleTankTilePacket(mc.theWorld, packet.readCoord(), packet);
                 break;
+            case 7:
+                boolean global = packet.readBoolean();
+                int type = packet.readInt();
+                NBTTagCompound nbtTagCompound = packet.readNBTTagCompound();
+                Map<Integer, NBTTagCompound> compoundMap = Arrays.stream(nbtTagCompound.getIntArray("freqs")).boxed()
+                        .collect(
+                                Collectors.toMap(freq -> freq, freq -> nbtTagCompound.getCompoundTag(freq.toString())));
+                if (compoundMap.isEmpty()) return;
+
+                updateStorage(global, type, compoundMap);
+                MinecraftForge.EVENT_BUS.post(new EnderStorageStoredEvent(global, type));
+                break;
         }
     }
 
@@ -58,5 +78,26 @@ public class EnderStorageCPH implements IClientPacketHandler {
         TileEntity tile = world.getTileEntity(pos.x, pos.y, pos.z);
 
         if (tile instanceof TileFrequencyOwner) ((TileFrequencyOwner) tile).handleDescriptionPacket(packet);
+    }
+
+    private void updateStorage(boolean global, int type, Map<Integer, NBTTagCompound> compoundMap) {
+        EnderStorageManager storageManager = EnderStorageManager.instance(true);
+        String owner = global ? "global" : Minecraft.getMinecraft().thePlayer.getDisplayName();
+        String typeStr;
+        switch (type) {
+            case EnderStorageStoredEvent.TYPE_ITEM:
+                typeStr = "item";
+                break;
+            case EnderStorageStoredEvent.TYPE_LIQUID:
+                typeStr = "liquid";
+                break;
+            default:
+                EnderStorage.LOGGER
+                        .error("EnderStorageCPH:Unknown EnderStorageStoredEvent TYPE,no information is returned.");
+                return;
+        }
+        for (Map.Entry<Integer, NBTTagCompound> entryMap : compoundMap.entrySet()) {
+            storageManager.setStorage(owner, entryMap.getKey(), typeStr, entryMap.getValue());
+        }
     }
 }
