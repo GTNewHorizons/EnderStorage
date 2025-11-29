@@ -61,7 +61,6 @@ public class EnderStorageCPH implements IClientPacketHandler {
                 Map<Integer, NBTTagCompound> compoundMap = Arrays.stream(nbtTagCompound.getIntArray("freqs")).boxed()
                         .collect(
                                 Collectors.toMap(freq -> freq, freq -> nbtTagCompound.getCompoundTag(freq.toString())));
-                if (compoundMap.isEmpty()) return;
 
                 updateStorage(global, type, compoundMap);
                 MinecraftForge.EVENT_BUS.post(new EnderStorageStoredEvent(global, type));
@@ -96,6 +95,7 @@ public class EnderStorageCPH implements IClientPacketHandler {
                         .error("EnderStorageCPH:Unknown EnderStorageStoredEvent TYPE,no information is returned.");
                 return;
         }
+        storageManager.cleanStorage(owner, typeStr);
         for (Map.Entry<Integer, NBTTagCompound> entryMap : compoundMap.entrySet()) {
             storageManager.setStorage(owner, entryMap.getKey(), typeStr, entryMap.getValue());
         }

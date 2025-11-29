@@ -40,7 +40,9 @@ public class EnderStorageSPH implements IServerPacketHandler {
     }
 
     private void sendStorageStored(PacketCustom packet, EntityPlayerMP sender) {
+        // see EnderStorageStoredEvent.global
         boolean global = packet.readBoolean();
+        // see EnderStorageStoredEvent.type
         int type = packet.readInt();
         String owner;
         if (global) {
