@@ -11,13 +11,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.WorldEvent;
 
+import codechicken.enderstorage.storage.item.EnderItemStorage;
+import codechicken.enderstorage.storage.liquid.EnderLiquidStorage;
 import codechicken.lib.config.ConfigFile;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -219,5 +223,29 @@ public class EnderStorageManager {
 
     public void requestSave(AbstractEnderStorage storage) {
         dirtyStorage.add(storage);
+    }
+
+    public void cleanStorage(String owner, String type) {
+        for (AbstractEnderStorage storage : storageList.getOrDefault(type, Collections.emptyList())) {
+            if (!Objects.equals(storage.owner, owner)) continue;
+            switch (type) {
+                case "item":
+                    if (storage instanceof EnderItemStorage) {
+                        EnderItemStorage itemStorage = (EnderItemStorage) storage;
+                        NBTTagCompound nbtTagCompound = itemStorage.saveToTag();
+                        nbtTagCompound.setTag("Items", new NBTTagList());
+                        itemStorage.loadFromTag(nbtTagCompound);
+                    }
+                    break;
+                case "liquid":
+                    if (storage instanceof EnderLiquidStorage) {
+                        EnderLiquidStorage liquidStorage = (EnderLiquidStorage) storage;
+                        NBTTagCompound nbtTagCompound = liquidStorage.saveToTag();
+                        ((NBTTagCompound) nbtTagCompound.getTag("tank")).setInteger("Amount", 0);
+                        liquidStorage.loadFromTag(nbtTagCompound);
+                    }
+                    break;
+            }
+        }
     }
 }
