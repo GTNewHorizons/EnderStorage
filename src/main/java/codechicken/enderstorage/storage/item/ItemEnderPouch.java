@@ -64,10 +64,8 @@ public class ItemEnderPouch extends Item {
     public ItemStack onItemRightClick(ItemStack item, World world, EntityPlayer player) {
         if (world.isRemote || player.isSneaking()) return item;
 
-        String guiTitle = item.getUnlocalizedName() + ".name";
-        if (StatCollector.canTranslate(GUI_TITLE_KEY)) {
-            guiTitle = GUI_TITLE_KEY;
-        }
+        String guiTitle = StatCollector.canTranslate(GUI_TITLE_KEY) ? GUI_TITLE_KEY
+                : item.getUnlocalizedName() + ".name";
         ((EnderItemStorage) EnderStorageManager.instance(world.isRemote)
                 .getStorage(getOwner(item), item.getItemDamage() & 0xFFF, "item")).openSMPGui(player, guiTitle);
         return item;

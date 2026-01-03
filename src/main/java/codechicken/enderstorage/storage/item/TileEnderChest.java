@@ -186,10 +186,7 @@ public class TileEnderChest extends TileFrequencyOwner implements IInventory {
 
     @Override
     public boolean activate(EntityPlayer player, int subHit) {
-        String guiTitle = "tile.enderchest|0.name";
-        if (StatCollector.canTranslate(INV_TITLE_KEY)) {
-            guiTitle = INV_TITLE_KEY;
-        }
+        String guiTitle = StatCollector.canTranslate(INV_TITLE_KEY) ? INV_TITLE_KEY : "tile.enderchest|0.name";
         storage.openSMPGui(player, guiTitle);
         return true;
     }
