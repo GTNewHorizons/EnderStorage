@@ -8,6 +8,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import codechicken.enderstorage.EnderStorage;
@@ -20,6 +21,8 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Vector3;
 
 public class TileEnderChest extends TileFrequencyOwner implements IInventory {
+
+    private static final String INV_TITLE_KEY = "gui.tile.enderchest|0.name.title";
 
     public float lidAngle;
     public float prevLidAngle;
@@ -183,7 +186,11 @@ public class TileEnderChest extends TileFrequencyOwner implements IInventory {
 
     @Override
     public boolean activate(EntityPlayer player, int subHit) {
-        storage.openSMPGui(player, "tile.enderchest|0.name");
+        String guiTitle = "tile.enderchest|0.name";
+        if (StatCollector.canTranslate(INV_TITLE_KEY)) {
+            guiTitle = INV_TITLE_KEY;
+        }
+        storage.openSMPGui(player, guiTitle);
         return true;
     }
 

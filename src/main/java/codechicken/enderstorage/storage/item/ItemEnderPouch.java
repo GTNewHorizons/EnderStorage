@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import codechicken.enderstorage.EnderStorage;
@@ -21,6 +22,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemEnderPouch extends Item {
+
+    private static final String GUI_TITLE_KEY = "gui.item.enderpouch.name.title";
 
     @SideOnly(Side.CLIENT)
     private SpriteSheet spriteSheet;
@@ -61,9 +64,12 @@ public class ItemEnderPouch extends Item {
     public ItemStack onItemRightClick(ItemStack item, World world, EntityPlayer player) {
         if (world.isRemote || player.isSneaking()) return item;
 
+        String guiTitle = item.getUnlocalizedName() + ".name";
+        if (StatCollector.canTranslate(GUI_TITLE_KEY)) {
+            guiTitle = GUI_TITLE_KEY;
+        }
         ((EnderItemStorage) EnderStorageManager.instance(world.isRemote)
-                .getStorage(getOwner(item), item.getItemDamage() & 0xFFF, "item"))
-                        .openSMPGui(player, item.getUnlocalizedName() + ".name");
+                .getStorage(getOwner(item), item.getItemDamage() & 0xFFF, "item")).openSMPGui(player, guiTitle);
         return item;
     }
 
