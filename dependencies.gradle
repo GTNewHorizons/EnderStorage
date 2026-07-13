@@ -1,7 +1,7 @@
 // Add your dependencies here
 
 dependencies {
-    api("com.github.GTNewHorizons:CodeChickenCore:1.4.10:dev")
+    api("com.github.GTNewHorizons:CodeChickenCore:1.4.16:dev")
 
-    devOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.8.48-GTNH:dev")
+    devOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.8.114-GTNH:dev")
 }

@@ -12,6 +12,7 @@ public class NEIEnderStorageConfig implements IConfigureNEI {
     @Override
     public void loadConfig() {
         if (EnderStorage.disableVanillaEnderChest) API.hideItem(new ItemStack(Blocks.ender_chest));
+        API.registerStackStringifyHandler(new StorageStackStringifyHandler());
     }
 
     @Override
