@@ -17,6 +17,7 @@ import net.minecraftforge.oredict.RecipeSorter.Category;
 
 import codechicken.core.featurehack.GameDataManipulator;
 import codechicken.enderstorage.EnderStorage;
+import codechicken.enderstorage.api.EnderStorageDyeTool;
 import codechicken.enderstorage.api.EnderStorageManager;
 import codechicken.enderstorage.storage.item.ItemEnderChestDummy;
 import codechicken.lib.inventory.InventoryUtils;
@@ -181,6 +182,11 @@ public class EnderStorageRecipe implements IRecipe {
             for (ItemStack target : OreDictionary.getOres(oreDictionaryNames[i]))
                 if (OreDictionary.itemMatches(target, item, false)) return i;
         }
+
+        if (item.getItem() instanceof EnderStorageDyeTool) {
+            return ((EnderStorageDyeTool) item.getItem()).getDye(item);
+        }
+
         return -1;
     }
 
