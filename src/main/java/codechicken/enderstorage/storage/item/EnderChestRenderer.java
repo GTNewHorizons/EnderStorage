@@ -133,7 +133,12 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
     public void renderTileEntityAt(TileEntity tile, double x, double y, double z, float partialTicks) {
         final CCRenderState state = CCRenderState.instance();
         state.resetInstance();
-        state.setBrightnessInstance(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+        int brightness = tile.getWorldObj().getLightBrightnessForSkyBlocks(
+                tile.xCoord,
+                tile.yCoord,
+                tile.zCoord,
+                tile.getBlockType().getLightValue());
+        state.setBrightnessInstance(brightness);
         state.useNormals = true;
 
         TileEnderChest chest = (TileEnderChest) tile;
