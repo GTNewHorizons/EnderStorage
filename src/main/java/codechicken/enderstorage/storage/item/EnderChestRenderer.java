@@ -56,9 +56,11 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
         CCRenderState.changeTexture(BUTTONS_TEXTURE);
-        drawButton(0, EnderStorageManager.getColourFromFreq(freq, 0), rotation, lidAngle);
-        drawButton(1, EnderStorageManager.getColourFromFreq(freq, 1), rotation, lidAngle);
-        drawButton(2, EnderStorageManager.getColourFromFreq(freq, 2), rotation, lidAngle);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        drawButton(0, EnderStorageManager.getColourFromFreq(freq, 0), rotation, lidAngle, state);
+        drawButton(1, EnderStorageManager.getColourFromFreq(freq, 1), rotation, lidAngle, state);
+        drawButton(2, EnderStorageManager.getColourFromFreq(freq, 2), rotation, lidAngle, state);
+        GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_NORMALIZE);
 
@@ -78,7 +80,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         }
     }
 
-    private static void drawButton(int button, int colour, int rot, double lidAngle) {
+    private static void drawButton(int button, int colour, int rot, double lidAngle, CCRenderState state) {
         float texx = 0.25F * (colour % 4);
         float texy = 0.25F * (colour / 4);
 
@@ -92,6 +94,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
+        if (state.hasBrightness) tessellator.setBrightness(state.brightness);
         addVecWithUV(verts[7], texx + 0.0938, texy + 0.0625);
         addVecWithUV(verts[3], texx + 0.0938, texy + 0.1875);
         addVecWithUV(verts[2], texx + 0.1562, texy + 0.1875);
