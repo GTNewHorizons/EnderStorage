@@ -15,6 +15,7 @@ import codechicken.enderstorage.internal.EnderStorageClientProxy;
 import codechicken.lib.render.CCModelLibrary;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Matrix4;
+import codechicken.lib.vec.Quat;
 import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Vector3;
 
@@ -24,8 +25,9 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
             "enderstorage:textures/enderchest.png");
     private static final ResourceLocation BUTTONS_TEXTURE = new ResourceLocation("enderstorage:textures/buttons.png");
     private static final ResourceLocation HEDRON_TEXTURE = new ResourceLocation("enderstorage:textures/hedronmap.png");
-    private static final ModelEnderChest model = new ModelEnderChest();
     private static final Vector3 Y = new Vector3(0, 1, 0);
+    private static final EnderDyeButton scratchButton = TileEnderChest.buttons[0].copy();
+    private static final Quat scratchQuat = new Quat();
 
     public EnderChestRenderer() {}
 
@@ -46,8 +48,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         GL11.glTranslatef(0.5F, 0.5F, 0.5F);
         GL11.glRotatef(rotation * 90, 0.0F, 1.0F, 0.0F);
         GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-        model.chestLid.rotateAngleX = lidAngle;
-        model.render(owned);
+        ModelEnderChest.render(state, owned, lidAngle);
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();
@@ -83,10 +84,11 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
 
         GL11.glPushMatrix();
 
-        EnderDyeButton ebutton = TileEnderChest.buttons[button].copy();
-        ebutton.rotate(0, 0.5625, 0.0625, 1, 0, 0, lidAngle);
-        ebutton.rotateMeta(rot);
-        Vector3[] verts = ebutton.verts;
+        EnderDyeButton ebutton = TileEnderChest.buttons[button];
+        ebutton.copyInto(scratchButton);
+        scratchButton.rotate(0, 0.5625, 0.0625, 1, 0, 0, lidAngle, scratchQuat);
+        scratchButton.rotateMeta(rot, scratchQuat);
+        Vector3[] verts = scratchButton.verts;
 
         Tessellator tessellator = Tessellator.instance;
         tessellator.startDrawingQuads();
