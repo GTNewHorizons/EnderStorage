@@ -41,6 +41,7 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         }
         GL11.glColor4f(1, 1, 1, 1);
 
+        GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT);
         CCRenderState.changeTexture(ENDERCHEST_TEXTURE);
         GL11.glEnable(GL11.GL_NORMALIZE);
         GL11.glPushMatrix();
@@ -60,9 +61,9 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
         drawButton(0, EnderStorageManager.getColourFromFreq(freq, 0), rotation, lidAngle, state);
         drawButton(1, EnderStorageManager.getColourFromFreq(freq, 1), rotation, lidAngle, state);
         drawButton(2, EnderStorageManager.getColourFromFreq(freq, 2), rotation, lidAngle, state);
-        GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
-        GL11.glDisable(GL11.GL_NORMALIZE);
+
+        GL11.glPopAttrib();
 
         if (isChestOpen) {
             double time = ClientUtils.getRenderTime() + offset;
@@ -71,12 +72,13 @@ public class EnderChestRenderer extends TileEntitySpecialRenderer {
                     .translate(x + 0.5, y + 0.2 + lidAngle * -0.5 + EnderStorageClientProxy.getPearlBob(time), z + 0.5)
                     .scale(0.04).apply(pearlRot);
 
+            GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT);
             GL11.glDisable(GL11.GL_LIGHTING);
             CCRenderState.changeTexture(HEDRON_TEXTURE);
             state.startDrawingInstance(4);
             CCModelLibrary.icosahedron4.render(pearlMat);
             state.drawInstance();
-            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glPopAttrib();
         }
     }
 
