@@ -26,7 +26,6 @@ import codechicken.lib.render.RenderUtils;
 import codechicken.lib.render.uv.UVTranslation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.SwapYZ;
 import codechicken.lib.vec.Transformation;
 import codechicken.lib.vec.Translation;
@@ -47,8 +46,9 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
     private static final UVTranslation UVTvalveOwned = new UVTranslation(0, 13 / 64D);
     private static final UVTranslation UVTvalveNotOwned = new UVTranslation(0, 0);
     private static final Vector3 Y = new Vector3(0, 1, 0);
-    private static final Vector3 Z = new Vector3(0, 0, 1);
     private static final Vector3 point = new Vector3(0, 0.4165, 0);
+    private static final Matrix4 pearlMat = new Matrix4();
+    private static final Cuboid6 liquidBounds = new Cuboid6(0, 0, 0, 0, 0, 0);
 
     private static final RenderCustomEndPortal renderEndPortal = new RenderCustomEndPortal(
             0.1205,
@@ -147,7 +147,11 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         }
         state.drawInstance();
 
-        new Rotation(valve, Z).at(point).glApply();
+        if (valve >= 1E-5 || valve <= -1E-5) {
+            GL11.glTranslated(point.x, point.y, point.z);
+            GL11.glRotatef((float) (valve * MathHelper.todeg), 0, 0, 1);
+            GL11.glTranslated(-point.x, -point.y, -point.z);
+        }
 
         CCRenderState.changeTexture(ENDERTANK_TEXTURE);
         state.startDrawingInstance(4);
@@ -158,12 +162,10 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
 
         if (renderFx) {
             double time = ClientUtils.getRenderTime() + offset;
-            Matrix4 pearlMat = CCModelLibrary.getRenderMatrix(
-                    x + 0.5,
-                    y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2,
-                    z + 0.5,
-                    new Rotation(time / 3, Y),
-                    0.04);
+            pearlMat.setIdentity()
+                    .translate(x + 0.5, y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2, z + 0.5)
+                    .scale(0.04)
+                    .rotate(time / 3, Y);
             GL11.glDisable(GL11.GL_LIGHTING);
             CCRenderState.changeTexture(HEDRON_TEXTURE);
             state.startDrawingInstance(4);
@@ -174,9 +176,10 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
     }
 
     public static void renderLiquid(FluidStack liquid, double x, double y, double z) {
+        liquidBounds.set(0.22 + x, 0.12 + y, 0.22 + z, 0.78 + x, 0.121 + 0.63 + y, 0.78 + z);
         RenderUtils.renderFluidCuboid(
                 liquid,
-                new Cuboid6(0.22 + x, 0.12 + y, 0.22 + z, 0.78 + x, 0.121 + 0.63 + y, 0.78 + z),
+                liquidBounds,
                 liquid.amount / ((double) EnderStorage.enderTankSize * FluidUtils.B),
                 0.75);
     }
