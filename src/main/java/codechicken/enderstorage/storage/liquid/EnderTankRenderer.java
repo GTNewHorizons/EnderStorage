@@ -1,8 +1,10 @@
 package codechicken.enderstorage.storage.liquid;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Map;
 
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -23,6 +25,7 @@ import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCModelLibrary;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.RenderUtils;
+import codechicken.lib.render.Vertex5;
 import codechicken.lib.render.uv.UVTranslation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
@@ -49,6 +52,15 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
     private static final Vector3 point = new Vector3(0, 0.4165, 0);
     private static final Matrix4 pearlMat = new Matrix4();
     private static final Cuboid6 liquidBounds = new Cuboid6(0, 0, 0, 0, 0, 0);
+
+    private static final int LIST_TANK = 0;
+    private static final int LIST_BUTTONS = 1;
+    private static final int LIST_VALVES = 1 + 3 * 16;
+    private static final int LIST_HEDRON = 1 + 3 * 16 + 2;
+    private static final int NUM_LISTS = 1 + 3 * 16 + 2 + 1;
+
+    private static int displayListBase = -1;
+    private static final FloatBuffer pearlBuf = GLAllocation.createDirectFloatBuffer(16);
 
     private static final RenderCustomEndPortal renderEndPortal = new RenderCustomEndPortal(
             0.1205,
@@ -85,6 +97,55 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         for (int colour = 0; colour < 16; colour++) {
             UVTranslationButtons[colour] = new UVTranslation(0.25 * (colour % 4), 0.25 * (colour / 4));
         }
+    }
+
+    private static void ensureDisplayLists() {
+        if (displayListBase != -1) return;
+
+        displayListBase = GL11.glGenLists(NUM_LISTS);
+        int next = displayListBase;
+        next = compileModelList(next, tankModel, null);
+        for (int i = 0; i < 3; i++) {
+            for (int colour = 0; colour < 16; colour++) {
+                next = compileModelList(next, buttons[i], UVTranslationButtons[colour]);
+            }
+        }
+        next = compileModelList(next, valveModel, UVTvalveOwned);
+        next = compileModelList(next, valveModel, UVTvalveNotOwned);
+        compileModelList(next, CCModelLibrary.icosahedron4, null);
+    }
+
+    private static int compileModelList(int listId, CCModel model, UVTranslation uvt) {
+        GL11.glNewList(listId, GL11.GL_COMPILE);
+        GL11.glBegin(model.vertexMode);
+        Vector3[] normals = model.normals();
+        for (int i = 0; i < model.verts.length; i++) {
+            Vertex5 v = model.verts[i];
+            if (normals != null && normals[i] != null) {
+                GL11.glNormal3f((float) normals[i].x, (float) normals[i].y, (float) normals[i].z);
+            }
+            double u = v.uv.u;
+            double vt = v.uv.v;
+            if (uvt != null) {
+                u += uvt.du;
+                vt += uvt.dv;
+            }
+            GL11.glTexCoord2f((float) u, (float) vt);
+            GL11.glVertex3f((float) v.vec.x, (float) v.vec.y, (float) v.vec.z);
+        }
+        GL11.glEnd();
+        GL11.glEndList();
+        return listId + 1;
+    }
+
+    private static void glMultMatrix(Matrix4 mat) {
+        pearlBuf.clear();
+        pearlBuf.put((float) mat.m00).put((float) mat.m10).put((float) mat.m20).put((float) mat.m30)
+                .put((float) mat.m01).put((float) mat.m11).put((float) mat.m21).put((float) mat.m31)
+                .put((float) mat.m02).put((float) mat.m12).put((float) mat.m22).put((float) mat.m32)
+                .put((float) mat.m03).put((float) mat.m13).put((float) mat.m23).put((float) mat.m33);
+        pearlBuf.flip();
+        GL11.glMultMatrix(pearlBuf);
     }
 
     @Override
@@ -124,6 +185,8 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
      */
     public static void renderTank(CCRenderState state, int rotation, float valve, int freq, boolean owned, double x,
             double y, double z, int offset, boolean renderFx) {
+        ensureDisplayLists();
+
         if (renderFx && !EnderStorage.disableFXTank) {
             renderEndPortal.renderAt(x, y, z);
         }
@@ -135,17 +198,13 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         GL11.glRotatef(-90 * (rotation + 2), 0, 1, 0);
 
         CCRenderState.changeTexture(ENDERTANK_TEXTURE);
-        state.startDrawingInstance(4);
-        tankModel.render();
-        state.drawInstance();
+        GL11.glCallList(displayListBase + LIST_TANK);
 
         CCRenderState.changeTexture(BUTTONS_TEXTURE);
-        state.startDrawingInstance(7);
         for (int i = 0; i < 3; i++) {
             int colour = EnderStorageManager.getColourFromFreq(freq, i);
-            buttons[i].render(UVTranslationButtons[colour]);
+            GL11.glCallList(displayListBase + LIST_BUTTONS + i * 16 + colour);
         }
-        state.drawInstance();
 
         if (valve >= 1E-5 || valve <= -1E-5) {
             GL11.glTranslated(point.x, point.y, point.z);
@@ -154,23 +213,20 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         }
 
         CCRenderState.changeTexture(ENDERTANK_TEXTURE);
-        state.startDrawingInstance(4);
-        valveModel.render(owned ? UVTvalveOwned : UVTvalveNotOwned);
-        state.drawInstance();
+        GL11.glCallList(displayListBase + LIST_VALVES + (owned ? 0 : 1));
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_NORMALIZE);
 
         if (renderFx) {
             double time = ClientUtils.getRenderTime() + offset;
-            pearlMat.setIdentity()
-                    .translate(x + 0.5, y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2, z + 0.5)
-                    .scale(0.04)
-                    .rotate(time / 3, Y);
+            pearlMat.setIdentity().translate(x + 0.5, y + 0.45 + EnderStorageClientProxy.getPearlBob(time) * 2, z + 0.5)
+                    .scale(0.04).rotate(time / 3, Y);
             GL11.glDisable(GL11.GL_LIGHTING);
             CCRenderState.changeTexture(HEDRON_TEXTURE);
-            state.startDrawingInstance(4);
-            CCModelLibrary.icosahedron4.render(pearlMat);
-            state.drawInstance();
+            GL11.glPushMatrix();
+            glMultMatrix(pearlMat);
+            GL11.glCallList(displayListBase + LIST_HEDRON);
+            GL11.glPopMatrix();
             GL11.glEnable(GL11.GL_LIGHTING);
         }
     }
