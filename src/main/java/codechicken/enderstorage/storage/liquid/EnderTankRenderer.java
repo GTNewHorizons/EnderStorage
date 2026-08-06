@@ -60,7 +60,6 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
     private static final int NUM_LISTS = 1 + 3 * 16 + 2 + 1;
 
     private static int displayListBase = -1;
-    private static final FloatBuffer pearlBuf = GLAllocation.createDirectFloatBuffer(16);
 
     private static final RenderCustomEndPortal renderEndPortal = new RenderCustomEndPortal(
             0.1205,
@@ -102,8 +101,12 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
     private static void ensureDisplayLists() {
         if (displayListBase != -1) return;
 
-        displayListBase = GL11.glGenLists(NUM_LISTS);
-        int next = displayListBase;
+        int base = GL11.glGenLists(NUM_LISTS);
+        if (base == 0) {
+            return;
+        }
+        displayListBase = base;
+        int next = base;
         next = compileModelList(next, tankModel, null);
         for (int i = 0; i < 3; i++) {
             for (int colour = 0; colour < 16; colour++) {
@@ -136,16 +139,6 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         GL11.glEnd();
         GL11.glEndList();
         return listId + 1;
-    }
-
-    private static void glMultMatrix(Matrix4 mat) {
-        pearlBuf.clear();
-        pearlBuf.put((float) mat.m00).put((float) mat.m10).put((float) mat.m20).put((float) mat.m30)
-                .put((float) mat.m01).put((float) mat.m11).put((float) mat.m21).put((float) mat.m31)
-                .put((float) mat.m02).put((float) mat.m12).put((float) mat.m22).put((float) mat.m32)
-                .put((float) mat.m03).put((float) mat.m13).put((float) mat.m23).put((float) mat.m33);
-        pearlBuf.flip();
-        GL11.glMultMatrix(pearlBuf);
     }
 
     @Override
@@ -192,6 +185,8 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
         }
         GL11.glColor4f(1, 1, 1, 1);
 
+        if (displayListBase == -1) return;
+
         GL11.glEnable(GL11.GL_NORMALIZE);
         GL11.glPushMatrix();
         GL11.glTranslated(x + 0.5, y, z + 0.5);
@@ -224,7 +219,7 @@ public class EnderTankRenderer extends TileEntitySpecialRenderer {
             GL11.glDisable(GL11.GL_LIGHTING);
             CCRenderState.changeTexture(HEDRON_TEXTURE);
             GL11.glPushMatrix();
-            glMultMatrix(pearlMat);
+            pearlMat.glApply();
             GL11.glCallList(displayListBase + LIST_HEDRON);
             GL11.glPopMatrix();
             GL11.glEnable(GL11.GL_LIGHTING);
