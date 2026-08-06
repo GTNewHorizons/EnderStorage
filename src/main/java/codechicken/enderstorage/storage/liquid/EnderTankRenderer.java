@@ -1,10 +1,8 @@
 package codechicken.enderstorage.storage.liquid;
 
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Map;
 
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
