@@ -42,6 +42,9 @@ public class ItemEnderStorageRenderer implements IItemRenderer {
         final CCRenderState state = CCRenderState.instance();
         switch (item.getItemDamage() >> 12) {
             case 0:
+                state.resetInstance();
+                state.pullLightmapInstance();
+                state.useNormals = true;
                 EnderChestRenderer.renderChest(state, rotation, freq, !owner.equals("global"), x, y, z, 0, 0);
                 break;
             case 1:
