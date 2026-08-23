@@ -25,6 +25,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
@@ -64,12 +65,8 @@ public class EnderStorage {
         config = new ConfigFile(new File(CommonUtils.getMinecraftDir() + "/config", "EnderStorage.cfg")).setComment(
                 "EnderStorage Configuration File\nDeleting any element will restore it to it's default value\nBlock ID's will be automatically generated the first time it's run");
 
-        proxy.preInit();
-    }
-
-    @EventHandler
-    public void init(FMLInitializationEvent event) {
         loadPersonalItem();
+
         disableVanillaEnderChest = config.getTag("disable-vanilla")
                 .setComment("Set to true to make the vanilla enderchest unplaceable.").getBooleanValue(true);
         removeVanillaRecipe = config.getTag("disable-vanilla_recipe")
@@ -90,10 +87,21 @@ public class EnderStorage {
                 .getBooleanValue(false);
 
         EnderStorageManager.loadConfig(config);
+
+        proxy.preInit();
+    }
+
+    @EventHandler
+    public void init(FMLInitializationEvent event) {
         EnderStorageManager.registerPlugin(new EnderItemStoragePlugin());
         EnderStorageManager.registerPlugin(new EnderLiquidStoragePlugin());
 
         proxy.init();
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        proxy.postInit();
     }
 
     private void loadPersonalItem() {
