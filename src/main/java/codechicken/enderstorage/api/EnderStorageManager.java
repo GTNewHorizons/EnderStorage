@@ -20,6 +20,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.WorldEvent;
 
+import codechicken.enderstorage.internal.PosteaCompat;
 import codechicken.enderstorage.storage.item.EnderItemStorage;
 import codechicken.enderstorage.storage.liquid.EnderLiquidStorage;
 import codechicken.lib.config.ConfigFile;
@@ -34,6 +35,8 @@ public class EnderStorageManager {
         public void onWorldLoad(WorldEvent.Load event) {
             if (event.world.isRemote) {
                 reloadManager(true);
+            } else if (instance(false) != null) {
+                instance(false).transformStorage();
             }
         }
 
@@ -65,6 +68,7 @@ public class EnderStorageManager {
     public final boolean client;
 
     private File saveDir;
+    private boolean transformed;
     private File[] saveFiles;
     private int saveTo;
     private final List<AbstractEnderStorage> dirtyStorage;
@@ -111,6 +115,14 @@ public class EnderStorageManager {
         }
     }
 
+    // The manager is created at FMLServerAboutToStartEvent, before FML applies the world's saved id map, so the
+    // Postea transform waits for the first server world load.
+    void transformStorage() {
+        if (transformed) return;
+        transformed = true;
+        PosteaCompat.transform("enderstorage:global", saveTag);
+    }
+
     private void save(boolean force) {
         if (!dirtyStorage.isEmpty() || force) {
             for (AbstractEnderStorage inv : dirtyStorage) {
@@ -121,6 +133,7 @@ public class EnderStorageManager {
             dirtyStorage.clear();
 
             try {
+                PosteaCompat.stamp(saveTag);
                 File saveFile = saveFiles[saveTo];
                 if (!saveFile.exists()) saveFile.createNewFile();
                 DataOutputStream dout = new DataOutputStream(new FileOutputStream(saveFile));
