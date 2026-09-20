@@ -1,5 +1,6 @@
 package codechicken.enderstorage.internal;
 
+import com.gtnewhorizons.postea.api.CustomDataReplacementManager;
 import net.minecraft.nbt.NBTTagCompound;
 
 import cpw.mods.fml.common.Loader;
@@ -26,11 +27,11 @@ public final class PosteaCompat {
     private static final class Impl {
 
         static void transform(String storageId, NBTTagCompound root) {
-            com.gtnewhorizons.postea.api.CustomDataReplacementManager.transform(storageId, root);
+            CustomDataReplacementManager.transform(storageId, root);
         }
 
         static void stamp(NBTTagCompound root) {
-            com.gtnewhorizons.postea.api.CustomDataReplacementManager.stamp(root);
+            CustomDataReplacementManager.stamp(root);
         }
     }
 }
