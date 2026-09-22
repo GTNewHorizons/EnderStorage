@@ -1,7 +1,8 @@
 package codechicken.enderstorage.internal;
 
-import com.gtnewhorizons.postea.api.CustomDataReplacementManager;
 import net.minecraft.nbt.NBTTagCompound;
+
+import com.gtnewhorizons.postea.api.CustomDataReplacementManager;
 
 import cpw.mods.fml.common.Loader;
 
