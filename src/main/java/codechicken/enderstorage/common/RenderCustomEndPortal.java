@@ -3,16 +3,23 @@ package codechicken.enderstorage.common;
 import java.nio.FloatBuffer;
 import java.util.Random;
 
+import net.coderbot.iris.uniforms.CapturedRenderingState;
+import net.coderbot.iris.uniforms.SystemTimeUniforms;
+import net.irisshaders.iris.api.v0.IrisApi;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityEndPortal;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.ARBVertexBlend;
 import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Optional;
 
 public class RenderCustomEndPortal {
 
@@ -42,6 +49,62 @@ public class RenderCustomEndPortal {
      * {@link net.minecraft.client.renderer.tileentity.RenderEndPortal#renderTileEntityAt(TileEntityEndPortal, double, double, double, float)}
      */
     public void renderAt(double posX, double posY, double posZ) {
+        if (Loader.isModLoaded("angelica")) {
+            renderWithShaderMaterial(posX, posY, posZ);
+        } else {
+            renderPortal(posX, posY, posZ);
+        }
+    }
+
+    @Optional.Method(modid = "angelica")
+    private void renderWithShaderMaterial(double posX, double posY, double posZ) {
+        if (!IrisApi.getInstance().isShaderPackInUse()) {
+            renderPortal(posX, posY, posZ);
+            return;
+        }
+
+        CapturedRenderingState state = CapturedRenderingState.INSTANCE;
+        state.pushCurrentBlockEntity();
+        try {
+            // Resolve the shaderpack's end portal material for just the portal surface.
+            state.setCurrentBlockEntity(Blocks.end_portal, 0);
+            renderShaderPortal(posX, posY, posZ);
+        } finally {
+            state.popCurrentBlockEntity();
+        }
+    }
+
+    @Optional.Method(modid = "angelica")
+    private void renderShaderPortal(double posX, double posY, double posZ) {
+        TextureManager textures = TileEntityRendererDispatcher.instance.field_147553_e;
+        if (textures == null) return;
+
+        // Shaderpacks render the portal layers themselves. Additive vanilla layers would multiply the effect.
+        GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_CURRENT_BIT);
+        try {
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            textures.bindTexture(end_portalTex);
+
+            float progress = (SystemTimeUniforms.TIMER.getFrameTimeCounter() * 0.01F) % 1.0F;
+            float uvEnd = progress + 0.2F;
+            Tessellator tessellator = Tessellator.instance;
+            tessellator.startDrawingQuads();
+            tessellator.setColorRGBA_F(0.075F, 0.15F, 0.2F, 1.0F);
+            tessellator.setBrightness(240 | (240 << 16));
+            tessellator.setNormal(0, 1, 0);
+            tessellator.addVertexWithUV(posX + surfaceX1, posY + surfaceY, posZ + surfaceZ1, progress, progress);
+            tessellator.addVertexWithUV(posX + surfaceX1, posY + surfaceY, posZ + surfaceZ2, progress, uvEnd);
+            tessellator.addVertexWithUV(posX + surfaceX2, posY + surfaceY, posZ + surfaceZ2, uvEnd, uvEnd);
+            tessellator.addVertexWithUV(posX + surfaceX2, posY + surfaceY, posZ + surfaceZ1, uvEnd, progress);
+            tessellator.draw();
+        } finally {
+            GL11.glPopAttrib();
+        }
+    }
+
+    private void renderPortal(double posX, double posY, double posZ) {
         final TileEntityRendererDispatcher info = TileEntityRendererDispatcher.instance;
         final TextureManager r = info.field_147553_e;
         if (r == null) return;
