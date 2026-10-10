@@ -3,9 +3,6 @@ package codechicken.enderstorage.common;
 import java.nio.FloatBuffer;
 import java.util.Random;
 
-import net.coderbot.iris.uniforms.CapturedRenderingState;
-import net.coderbot.iris.uniforms.SystemTimeUniforms;
-import net.irisshaders.iris.api.v0.IrisApi;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
@@ -17,6 +14,8 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.ARBVertexBlend;
 import org.lwjgl.opengl.GL11;
+
+import com.gtnewhorizons.angelica.api.ShaderPacks;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Optional;
@@ -58,19 +57,17 @@ public class RenderCustomEndPortal {
 
     @Optional.Method(modid = "angelica")
     private void renderWithShaderMaterial(double posX, double posY, double posZ) {
-        if (!IrisApi.getInstance().isShaderPackInUse()) {
+        if (!ShaderPacks.isInUse()) {
             renderPortal(posX, posY, posZ);
             return;
         }
 
-        CapturedRenderingState state = CapturedRenderingState.INSTANCE;
-        state.pushCurrentBlockEntity();
+        // Resolve the shaderpack's end portal material for just the portal surface.
+        ShaderPacks.beginBlockEntity(Blocks.end_portal, 0);
         try {
-            // Resolve the shaderpack's end portal material for just the portal surface.
-            state.setCurrentBlockEntity(Blocks.end_portal, 0);
             renderShaderPortal(posX, posY, posZ);
         } finally {
-            state.popCurrentBlockEntity();
+            ShaderPacks.endBlockEntity();
         }
     }
 
@@ -87,7 +84,7 @@ public class RenderCustomEndPortal {
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             textures.bindTexture(end_portalTex);
 
-            float progress = (SystemTimeUniforms.TIMER.getFrameTimeCounter() * 0.01F) % 1.0F;
+            float progress = (ShaderPacks.getFrameTimeCounter() * 0.01F) % 1.0F;
             float uvEnd = progress + 0.2F;
             Tessellator tessellator = Tessellator.instance;
             tessellator.startDrawingQuads();

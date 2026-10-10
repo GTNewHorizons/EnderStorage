@@ -3,7 +3,7 @@
 dependencies {
     api("com.github.GTNewHorizons:CodeChickenCore:1.4.17:dev")
 
-    compileOnly("com.github.GTNewHorizons:Angelica:2.2.27:dev") { transitive = false }
+    compileOnly("com.github.GTNewHorizons:Angelica:2.2.30:api") { transitive = false }
 
     devOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.8.118-GTNH:dev")
 }
