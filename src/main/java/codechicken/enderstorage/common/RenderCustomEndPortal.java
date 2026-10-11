@@ -15,9 +15,9 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.ARBVertexBlend;
 import org.lwjgl.opengl.GL11;
 
-import com.gtnewhorizons.angelica.api.ShaderPacks;
+import com.gtnewhorizons.angelica.api.shaders.ShaderPacks;
 
-import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModAPIManager;
 import cpw.mods.fml.common.Optional;
 
 public class RenderCustomEndPortal {
@@ -48,14 +48,14 @@ public class RenderCustomEndPortal {
      * {@link net.minecraft.client.renderer.tileentity.RenderEndPortal#renderTileEntityAt(TileEntityEndPortal, double, double, double, float)}
      */
     public void renderAt(double posX, double posY, double posZ) {
-        if (Loader.isModLoaded("angelica")) {
+        if (ModAPIManager.INSTANCE.hasAPI("angelica|shaders")) {
             renderWithShaderMaterial(posX, posY, posZ);
         } else {
             renderPortal(posX, posY, posZ);
         }
     }
 
-    @Optional.Method(modid = "angelica")
+    @Optional.Method(modid = "angelica|shaders")
     private void renderWithShaderMaterial(double posX, double posY, double posZ) {
         if (!ShaderPacks.isInUse()) {
             renderPortal(posX, posY, posZ);
@@ -71,7 +71,7 @@ public class RenderCustomEndPortal {
         }
     }
 
-    @Optional.Method(modid = "angelica")
+    @Optional.Method(modid = "angelica|shaders")
     private void renderShaderPortal(double posX, double posY, double posZ) {
         TextureManager textures = TileEntityRendererDispatcher.instance.field_147553_e;
         if (textures == null) return;
