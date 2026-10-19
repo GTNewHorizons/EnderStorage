@@ -22,6 +22,8 @@ import cpw.mods.fml.common.Optional;
 
 public class RenderCustomEndPortal {
 
+    private static final boolean HAS_ANGELICA_SHADERS = ModAPIManager.INSTANCE.hasAPI("angelica|shaders");
+
     private static final ResourceLocation end_skyTex = new ResourceLocation("textures/environment/end_sky.png");
     private static final ResourceLocation end_portalTex = new ResourceLocation("textures/entity/end_portal.png");
     private static final Random random = new Random(31100L);
@@ -48,7 +50,7 @@ public class RenderCustomEndPortal {
      * {@link net.minecraft.client.renderer.tileentity.RenderEndPortal#renderTileEntityAt(TileEntityEndPortal, double, double, double, float)}
      */
     public void renderAt(double posX, double posY, double posZ) {
-        if (ModAPIManager.INSTANCE.hasAPI("angelica|shaders")) {
+        if (HAS_ANGELICA_SHADERS) {
             renderWithShaderMaterial(posX, posY, posZ);
         } else {
             renderPortal(posX, posY, posZ);
