@@ -34,6 +34,10 @@ public class EnderDyeButton {
         rotate(0.5, 0, 0.5, 0, 1, 0, angle * -0.5 * 3.14159);
     }
 
+    public void rotateMeta(int angle, Quat quat) {
+        rotate(0.5, 0, 0.5, 0, 1, 0, angle * -0.5 * 3.14159, quat);
+    }
+
     /**
      * 
      * @param ax
@@ -42,7 +46,16 @@ public class EnderDyeButton {
      * @param angle in radians
      */
     public void rotate(double px, double py, double pz, double ax, double ay, double az, double angle) {
-        Quat quat = Quat.aroundAxis(ax, ay, az, angle);
+        rotate(px, py, pz, ax, ay, az, angle, Quat.aroundAxis(ax, ay, az, angle));
+    }
+
+    /**
+     * Rotates the vertices using the given quaternion as scratch space, avoiding per-call allocations.
+     * 
+     * @param angle in radians
+     */
+    public void rotate(double px, double py, double pz, double ax, double ay, double az, double angle, Quat quat) {
+        quat.setAroundAxis(ax, ay, az, angle);
         for (int i = 0; i < 8; i++) {
             verts[i].add(-px, -py, -pz);
             quat.rotate(verts[i]);
@@ -60,6 +73,13 @@ public class EnderDyeButton {
         }
 
         return newbutton;
+    }
+
+    public void copyInto(EnderDyeButton target) {
+        target.button = button;
+        for (int i = 0; i < 8; i++) {
+            target.verts[i].set(verts[i]);
+        }
     }
 
     public void flipCoords(int ax, int ay, int az) {

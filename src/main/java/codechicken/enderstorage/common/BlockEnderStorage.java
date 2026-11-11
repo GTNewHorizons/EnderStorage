@@ -28,6 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import codechicken.enderstorage.EnderStorage;
+import codechicken.enderstorage.api.EnderStorageDyeTool;
 import codechicken.enderstorage.api.EnderStorageManager;
 import codechicken.enderstorage.storage.item.TileEnderChest;
 import codechicken.enderstorage.storage.liquid.TileEnderTank;
@@ -152,7 +153,13 @@ public class BlockEnderStorage extends BlockContainer {
                 if (colours[hit.subHit - 1] == (~dye & 0xF)) return false;
                 colours[hit.subHit - 1] = ~dye & 0xF;
                 tile.setFreq(EnderStorageManager.getFreqFromColours(colours));
-                if (!player.capabilities.isCreativeMode) item.stackSize--;
+                if (!player.capabilities.isCreativeMode) {
+                    if (item.getItem() instanceof EnderStorageDyeTool) {
+                        ((EnderStorageDyeTool) item.getItem()).expendToolUse(item);
+                    } else {
+                        item.stackSize--;
+                    }
+                }
                 return true;
             }
         }
