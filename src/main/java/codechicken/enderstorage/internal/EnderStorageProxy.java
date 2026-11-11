@@ -44,6 +44,5 @@ public class EnderStorageProxy {
         MinecraftForge.EVENT_BUS.register(tankSynchroniser);
 
         if (disableVanillaEnderChest) EnderStorageRecipe.removeVanillaChest();
-
     }
 }
