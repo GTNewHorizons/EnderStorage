@@ -103,11 +103,12 @@ public class EnderStorageRecipe implements IRecipe {
     }
 
     public static void removeVanillaChest() {
+        Item vanilla = Item.getItemFromBlock(Blocks.ender_chest);
         GameDataManipulator.replaceItem(Block.getIdFromBlock(Blocks.ender_chest), new ItemEnderChestDummy());
         Iterator<IRecipe> iterator = CraftingManager.getInstance().getRecipeList().iterator();
         while (iterator.hasNext()) {
             ItemStack r = iterator.next().getRecipeOutput();
-            if (r != null && r.getItem() == Item.getItemFromBlock(Blocks.ender_chest)) iterator.remove();
+            if (r != null && r.getItem() == vanilla) iterator.remove();
         }
 
         if (!EnderStorage.removeVanillaRecipe) CraftingManager.getInstance().addRecipe(
