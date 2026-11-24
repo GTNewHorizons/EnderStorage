@@ -1,13 +1,13 @@
 package codechicken.enderstorage.internal;
 
-import com.gtnewhorizons.postea.api.IVersionedTransformer;
 import net.minecraft.nbt.NBTTagCompound;
 
 import com.gtnewhorizons.postea.api.CustomDataReplacementManager;
 
 import cpw.mods.fml.common.Loader;
 
-/// Used to provide custom save data (like the ender storage table) to Postea's [IVersionedTransformer]s.
+/// Used to provide custom save data (like the ender storage table) to Postea's
+/// [com.gtnewhorizons.postea.api.IVersionedTransformer]s.
 ///
 /// These transformers allow other mods to change saved data based on their own version stamps. This compat flags,
 /// to those transformers, the times they should fire. [#transform] is used before consuming data, so the transformer
