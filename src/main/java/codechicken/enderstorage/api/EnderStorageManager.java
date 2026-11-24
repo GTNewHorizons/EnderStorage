@@ -30,9 +30,8 @@ import cpw.mods.fml.common.gameevent.PlayerEvent;
 /// Keeps the ender chest and tank storages of one side. The server manager loads and saves them as one root in the
 /// world's `EnderStorage` folder.
 ///
-/// The server manager transforms its root through Postea before the first storage lookup reads from it. That lookup can
-/// come while the world is still loading its forced chunks. The transform works on a copy, so a failed transform leaves
-/// the root as read and the next lookup retries it.
+/// The server manager transforms its root through Postea before the first storage lookup reads from it. The transform
+/// works on a copy, so a failed transform leaves the root as read and the next lookup retries it.
 public class EnderStorageManager {
 
     public static class EnderStorageSaveHandler {
