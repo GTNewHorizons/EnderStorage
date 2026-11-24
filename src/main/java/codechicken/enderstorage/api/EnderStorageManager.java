@@ -31,7 +31,9 @@ import cpw.mods.fml.common.gameevent.PlayerEvent;
 /// world's `EnderStorage` folder.
 ///
 /// The server manager transforms its root through Postea before the first storage lookup reads from it. The transform
-/// works on a copy, so a failed transform leaves the root as read and the next lookup retries it.
+/// works on a copy, so a failed transform leaves the root as read and the next lookup retries it. A save transforms the
+/// root first when no lookup has, so the root is only ever
+/// written stamped after a successful transform.
 public class EnderStorageManager {
 
     public static class EnderStorageSaveHandler {
@@ -126,6 +128,7 @@ public class EnderStorageManager {
 
     private void save(boolean force) {
         if (!dirtyStorage.isEmpty() || force) {
+            transformStorage();
             for (AbstractEnderStorage inv : dirtyStorage) {
                 saveTag.setTag(inv.freq + "|" + inv.owner + "|" + inv.type(), inv.saveToTag());
                 inv.setClean();
