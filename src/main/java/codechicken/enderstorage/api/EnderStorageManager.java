@@ -27,17 +27,18 @@ import codechicken.lib.config.ConfigFile;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 
+/// Keeps the ender chest and tank storages of one side. The server manager loads and saves them as one root in the
+/// world's `EnderStorage` folder.
+///
+/// The server manager transforms its root through Postea before the first storage lookup reads from it. That lookup can
+/// come while the world is still loading its forced chunks.
 public class EnderStorageManager {
 
     public static class EnderStorageSaveHandler {
 
         @SubscribeEvent
         public void onWorldLoad(WorldEvent.Load event) {
-            if (event.world.isRemote) {
-                reloadManager(true);
-            } else if (instance(false) != null) {
-                instance(false).transformStorage();
-            }
+            if (event.world.isRemote) reloadManager(true);
         }
 
         @SubscribeEvent
@@ -115,12 +116,10 @@ public class EnderStorageManager {
         }
     }
 
-    // The manager is created at FMLServerAboutToStartEvent, before FML applies the world's saved id map, so the
-    // Postea transform waits for the first server world load.
-    void transformStorage() {
+    private synchronized void transformStorage() {
         if (transformed) return;
-        transformed = true;
         PosteaCompat.transform("enderstorage:global", saveTag);
+        transformed = true;
     }
 
     private void save(boolean force) {
@@ -168,6 +167,7 @@ public class EnderStorageManager {
         String key = freq + "|" + owner + "|" + type;
         AbstractEnderStorage storage = storageMap.get(key);
         if (storage == null) {
+            if (!client) transformStorage();
             storage = plugins.get(type).createEnderStorage(this, owner, freq);
             if (!client && saveTag.hasKey(key)) storage.loadFromTag(saveTag.getCompoundTag(key));
             storageMap.put(key, storage);
