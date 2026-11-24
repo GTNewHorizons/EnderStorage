@@ -31,7 +31,8 @@ import cpw.mods.fml.common.gameevent.PlayerEvent;
 /// world's `EnderStorage` folder.
 ///
 /// The server manager transforms its root through Postea before the first storage lookup reads from it. That lookup can
-/// come while the world is still loading its forced chunks.
+/// come while the world is still loading its forced chunks. The transform works on a copy, so a failed transform leaves
+/// the root as read and the next lookup retries it.
 public class EnderStorageManager {
 
     public static class EnderStorageSaveHandler {
@@ -118,7 +119,9 @@ public class EnderStorageManager {
 
     private synchronized void transformStorage() {
         if (transformed) return;
-        PosteaCompat.transform("enderstorage:global", saveTag);
+        NBTTagCompound transformedTag = (NBTTagCompound) saveTag.copy();
+        PosteaCompat.transform("enderstorage:global", transformedTag);
+        saveTag = transformedTag;
         transformed = true;
     }
 
