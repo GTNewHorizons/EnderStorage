@@ -6,4 +6,6 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:Angelica:2.2.31:api") { transitive = false }
 
     devOnlyNonPublishable("com.github.GTNewHorizons:NotEnoughItems:2.8.118-GTNH:dev")
+
+    compileOnly("com.github.GTNewHorizons:Postea:1.4.0-mu:dev")
 }

@@ -33,7 +33,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
         modid = EnderStorage.MOD_NAME,
         name = EnderStorage.MOD_NAME,
         version = "GRADLETOKEN_VERSION",
-        dependencies = "required-after:CodeChickenCore@[" + CodeChickenCorePlugin.version + ",)",
+        dependencies = "required-after:CodeChickenCore@[" + CodeChickenCorePlugin.version + ",);after:postea@[1.4.0,)",
         acceptedMinecraftVersions = CodeChickenCorePlugin.mcVersion)
 public class EnderStorage {
 

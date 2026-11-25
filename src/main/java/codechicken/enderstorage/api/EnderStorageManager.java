@@ -20,21 +20,26 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.world.WorldEvent;
 
+import codechicken.enderstorage.internal.PosteaCompat;
 import codechicken.enderstorage.storage.item.EnderItemStorage;
 import codechicken.enderstorage.storage.liquid.EnderLiquidStorage;
 import codechicken.lib.config.ConfigFile;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 
+/// Keeps the ender chest and tank storages of one side. The server manager loads and saves them as one root in the
+/// world's `EnderStorage` folder.
+///
+/// The server manager transforms its root through Postea before the first storage lookup reads from it, and before a
+/// save when no lookup has. The transform works on a copy, so a failed transform leaves the root as read and the next
+/// lookup retries it.
 public class EnderStorageManager {
 
     public static class EnderStorageSaveHandler {
 
         @SubscribeEvent
         public void onWorldLoad(WorldEvent.Load event) {
-            if (event.world.isRemote) {
-                reloadManager(true);
-            }
+            if (event.world.isRemote) reloadManager(true);
         }
 
         @SubscribeEvent
@@ -65,6 +70,7 @@ public class EnderStorageManager {
     public final boolean client;
 
     private File saveDir;
+    private boolean transformed;
     private File[] saveFiles;
     private int saveTo;
     private final List<AbstractEnderStorage> dirtyStorage;
@@ -111,8 +117,17 @@ public class EnderStorageManager {
         }
     }
 
+    private synchronized void transformStorage() {
+        if (transformed) return;
+        NBTTagCompound transformedTag = (NBTTagCompound) saveTag.copy();
+        PosteaCompat.transform("enderstorage:global", transformedTag);
+        saveTag = transformedTag;
+        transformed = true;
+    }
+
     private void save(boolean force) {
         if (!dirtyStorage.isEmpty() || force) {
+            transformStorage();
             for (AbstractEnderStorage inv : dirtyStorage) {
                 saveTag.setTag(inv.freq + "|" + inv.owner + "|" + inv.type(), inv.saveToTag());
                 inv.setClean();
@@ -121,6 +136,7 @@ public class EnderStorageManager {
             dirtyStorage.clear();
 
             try {
+                PosteaCompat.stamp(saveTag);
                 File saveFile = saveFiles[saveTo];
                 if (!saveFile.exists()) saveFile.createNewFile();
                 DataOutputStream dout = new DataOutputStream(new FileOutputStream(saveFile));
@@ -155,6 +171,7 @@ public class EnderStorageManager {
         String key = freq + "|" + owner + "|" + type;
         AbstractEnderStorage storage = storageMap.get(key);
         if (storage == null) {
+            if (!client) transformStorage();
             storage = plugins.get(type).createEnderStorage(this, owner, freq);
             if (!client && saveTag.hasKey(key)) storage.loadFromTag(saveTag.getCompoundTag(key));
             storageMap.put(key, storage);
